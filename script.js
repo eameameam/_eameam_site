@@ -7,5 +7,4 @@ function showPage(pageId) {
         page.style.transform = "translateX(100%)";
       }
     });
-  }
-  
+  } 
