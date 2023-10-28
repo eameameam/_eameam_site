@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Визитка</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+
+  <div class="container">
+    <div class="page" id="home">
+      <h1>Имя</h1>
+      <p>Кто я и что делаю</p>
+      <button onclick="showPage('contacts')">Контакты</button>
+      <button onclick="showPage('portfolio')">Портфолио</button>
+    </div>
+
+    <div class="page hidden" id="contacts">
+      <h1>Контакты</h1>
+      <p>Email, телефон, и т.д.</p>
+      <button onclick="showPage('home')">Назад</button>
+    </div>
+
+    <div class="page hidden" id="portfolio">
+      <h1>Портфолио</h1>
+      <p>Проекты, работы, и т.д.</p>
+      <button onclick="showPage('home')">Назад</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
