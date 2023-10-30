@@ -1,34 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-  <title>Визитка</title>
-  <link rel="stylesheet" type="text/css" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Popup</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-
-  <div class="container">
-    <div class="page" id="home">
-      <h1>Имя</h1>
-      <p>Кто я и что делаю</p>
-      <button onclick="showPage('contacts')">Контакты</button>
-      <button onclick="showPage('portfolio')">Портфолио</button>
-    </div>
-
-    <div class="page hidden" id="contacts">
-      <h1>Контакты</h1>
-      <p>Email, телефон, и т.д.</p>
-      <button onclick="showPage('home')">Назад</button>
-    </div>
-
-    <div class="page hidden" id="portfolio">
-      <h1>Портфолио</h1>
-      <p>Проекты, работы, и т.д.</p>
-      <button onclick="showPage('home')">Назад</button>
-    </div>
+  <div id="content">
+    <img id="logo" src="Resources/logo.png" alt="Логотип">
+    <button id="contactBtn">_contact</button>
+    <div id="centerText">Press mouse button</div>
   </div>
-
+  <div id="overlay" class="hidden"></div>
+  <div id="popup" class="hidden">
+    <button id="closeBtn"></button>
+    <img src="Resources/logo.png">
+    <div class="info">
+      <h2>Technical Animator</h2>
+      <p>E-mail: <a href="mailto:eam.motion@gmail.com">eam.motion@gmail.com</a></p>
+      <p>Telegram: <a href="https://t.me/eamotion">@eamotion</a></p>
+      <p>Instagram: <a href="https://instagram.com/eam.blinchik">@eam.blinchik</a> / <a href="https://instagram.com/eam.motion">@eam.motion</a></p>
+    </div>
+    <div class="year">2023</div> 
+  </div>
   <script src="script.js"></script>
-
 </body>
 </html>
- 
+
