@@ -5,7 +5,10 @@ document.addEventListener("DOMContentLoaded", function() {
   const content = document.getElementById("content");
   const centerText = document.getElementById("centerText");
   const overlay = document.getElementById("overlay");
-  
+
+  let circle = null;
+  let line = null;
+
   function fadeOut(el){
     el.style.opacity = 1;
     (function fade() {
@@ -16,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     })();
   }
-  
+
   function fadeIn(el, display){
     el.style.opacity = 0;
     el.style.display = display || "block";
@@ -46,23 +49,63 @@ document.addEventListener("DOMContentLoaded", function() {
     overlay.classList.add("hidden");
     content.classList.remove("blur");
   });
-  
+
   document.addEventListener("mousedown", function(event) {
+    event.preventDefault();
     fadeOut(centerText);
 
-    let circle = document.createElement("div");
-    circle.style.width = "5px";
-    circle.style.height = "5px";
+    circle = document.createElement("div");
+    circle.style.width = "10px";
+    circle.style.height = "10px";
     circle.style.background = "white";
     circle.style.position = "absolute";
     circle.style.borderRadius = "50%";
-    circle.style.left = event.clientX + "px";
-    circle.style.top = event.clientY + "px";
+    circle.style.left = (event.clientX - 5) + "px";
+    circle.style.top = (event.clientY - 5) + "px";
+
+    line = document.createElement("div");
+    line.style.width = "5px";
+    line.style.background = "white";
+    line.style.position = "absolute";
+    line.style.left = (event.clientX) + "px";
+    line.style.top = (event.clientY) + "px";
 
     document.body.appendChild(circle);
+    document.body.appendChild(line);
+
+    document.addEventListener("mousemove", drawLine);
   });
+
+  function drawLine(event) {
+    let x1 = circle.offsetLeft + 5;
+    let y1 = circle.offsetTop + 5;
+    let x2 = event.clientX;
+    let y2 = event.clientY;
+  
+    let length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    let angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI - 90;
+  
+    line.style.height = length + "px";
+    line.style.left = x1 + "px";
+    line.style.top = y1 + "px";
+    line.style.transformOrigin = "top left";
+    line.style.transform = `rotate(${angle}deg)`;
+  }
+  
+
 
   document.addEventListener("mouseup", function() {
     fadeIn(centerText);
+
+    if (circle) {
+      document.body.removeChild(circle);
+      circle = null;
+    }
+    
+    if (line) {
+      document.body.removeChild(line);
+      document.removeEventListener("mousemove", drawLine);
+      line = null;
+    }
   });
 });
