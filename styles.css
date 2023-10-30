@@ -58,6 +58,7 @@ body {
   font-size: 24px;
   color: white;
   z-index: 1;
+  cursor: default;
 }
 
 #overlay {
