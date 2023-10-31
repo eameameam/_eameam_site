@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   const elements = {
     contactBtn: document.getElementById("contactBtn"),
     popup: document.getElementById("popup"),
@@ -11,6 +11,9 @@ document.addEventListener("DOMContentLoaded", function() {
   let circle = null;
   let line = null;
   let popups = [];
+  let isFullScreenPopupVisible = false;
+  let isPopupCreated = false;
+
 
   function fadeOut(el) {
     el.style.opacity = 1;
@@ -35,13 +38,28 @@ document.addEventListener("DOMContentLoaded", function() {
     })();
   }
 
+  window.addEventListener("blur", function () {
+    if (!elements.popup.classList.contains("hidden")) {
+      elements.popup.classList.add("hidden");
+      elements.overlay.classList.add("hidden");
+      elements.content.classList.remove("blur");
+    }
+
+    if (isPopupCreated) {
+      cleanUp(circle, line, popups);
+      document.removeEventListener("mousemove", drawLine);
+      isPopupCreated = false;
+    }
+  });
+
+
   function handleOverlayClick() {
     elements.popup.classList.add("hidden");
     elements.overlay.classList.add("hidden");
     elements.content.classList.remove("blur");
   }
 
-  elements.contactBtn.addEventListener("click", function() {
+  elements.contactBtn.addEventListener("click", function () {
     elements.popup.classList.remove("hidden");
     elements.overlay.classList.remove("hidden");
     elements.content.classList.add("blur");
@@ -67,22 +85,22 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   const imageConfigs = [
-    { name: '_anim', xOffset: 0, yOffset: -.6, scale: 1 }, 
-    { name: '_rig', xOffset: 1, yOffset: 0, scale: 1 },   
-    { name: '_unity', xOffset: -0.8, yOffset: 0.7, scale: 1 }, 
-    { name: '_unreal', xOffset: 0.8, yOffset: 0.7, scale: 1 }, 
-    { name: '_tools', xOffset: -1, yOffset: 0, scale: 1 } 
+    { name: '_anim', xOffset: 0, yOffset: -.6, scale: 1 },
+    { name: '_rig', xOffset: 1, yOffset: 0, scale: 1 },
+    { name: '_unity', xOffset: -0.8, yOffset: 0.7, scale: 1 },
+    { name: '_unreal', xOffset: 0.8, yOffset: 0.7, scale: 1 },
+    { name: '_tools', xOffset: -1, yOffset: 0, scale: 1 }
   ];
-  
 
-  let isPopupCreated = false; 
 
-  document.addEventListener("mousedown", function(event) {
+  document.addEventListener("mousedown", function (event) {
     event.preventDefault();
+
+    if (isFullScreenPopupVisible) return;
 
     if (event.clientX > 380 || event.clientY > 120) {
       if (elements.popup.classList.contains("hidden")) {
-        isPopupCreated = true; 
+        isPopupCreated = true;
 
         fadeOut(elements.centerText);
 
@@ -90,25 +108,65 @@ document.addEventListener("DOMContentLoaded", function() {
         line = createLine(event);
         document.addEventListener("mousemove", drawLine);
 
+        elements.content.classList.add("blur");
+
         popups = imageConfigs.map(config => createPopup(event, config));
         popups.forEach(popup => {
           document.body.appendChild(popup);
           fadeIn(popup);
         });
+        popups.forEach(popup => {
+          popup.addEventListener("mouseenter", function () {
+            const fullScreenPopup = document.getElementById("fullScreenPopup");
+            const fullScreenContent = document.getElementById("fullScreenContent");
+
+            if (popup.style.backgroundImage.includes('_anim')) {
+              fullScreenContent.innerHTML = '<h1>Animation Details</h1><p>...some content...</p>';
+            } else if (popup.style.backgroundImage.includes('_rig')) {
+              fullScreenContent.innerHTML = '<h1>Rigging Details</h1><p>...some content...</p>';
+            } else if (popup.style.backgroundImage.includes('_unity')) {
+              fullScreenContent.innerHTML = '<h1>Unity Details</h1><p>...some content...</p>';
+            } else if (popup.style.backgroundImage.includes('_unreal')) {
+              fullScreenContent.innerHTML = '<h1>Unreal Engine Details</h1><p>...some content...</p>';
+            } else if (popup.style.backgroundImage.includes('_tools')) {
+              fullScreenContent.innerHTML = '<h1>Tools Details</h1><p>...some content...</p>';
+            }
+
+            fadeIn(fullScreenPopup, "flex");
+            elements.content.classList.add("blur");
+            isFullScreenPopupVisible = true;
+            cleanUp(circle, line, popups);
+          });
+        });
       }
     }
   });
 
-  document.addEventListener("mouseup", function() {
-    if (isPopupCreated) {
-      fadeIn(elements.centerText);
-    }
+  document.addEventListener("mouseup", function () {
+    if (isFullScreenPopupVisible) return;
 
-    cleanUp(circle, line, popups);
-    document.removeEventListener("mousemove", drawLine);
-    isPopupCreated = false; // Сбрасываем флаг в false
+    if (!isFullScreenPopupVisible) {
+      if (isPopupCreated) {
+        fadeIn(elements.centerText);
+      }
+
+      elements.content.classList.remove("blur");
+      cleanUp(circle, line, popups);
+      document.removeEventListener("mousemove", drawLine);
+      isPopupCreated = false;
+    }
   });
 
+  function isDescendant(parent, child) {
+    let node = child.parentNode;
+    while (node != null) {
+      if (node == parent) {
+        return true;
+      }
+      node = node.parentNode;
+    }
+    return false;
+  }
 
   function createCircle(event) {
     const circle = document.createElement("div");
@@ -131,17 +189,19 @@ document.addEventListener("DOMContentLoaded", function() {
   function createPopup(event, imageConfig) {
     const popup = document.createElement("div");
     popup.style = `width: 200px; height: 50px; background-image: url('Resources/${imageConfig.name}.png'); background-size: cover; position: absolute;`;
-  
-    const x = event.clientX + 160 * imageConfig.xOffset * imageConfig.scale - 100; 
-    const y = event.clientY + 160 * imageConfig.yOffset * imageConfig.scale - 25; 
-  
+
+    const x = event.clientX + 160 * imageConfig.xOffset * imageConfig.scale - 100;
+    const y = event.clientY + 160 * imageConfig.yOffset * imageConfig.scale - 25;
+
     popup.style.left = `${x}px`;
     popup.style.top = `${y}px`;
-  
+
     return popup;
   }
 
   function cleanUp(circle, line, popups) {
+    const fullScreenPopup = document.getElementById("fullScreenPopup");
+    fadeOut(fullScreenPopup);
     if (circle) document.body.removeChild(circle);
     if (line) document.body.removeChild(line);
     popups.forEach(popup => {
@@ -150,4 +210,62 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     popups = [];
   }
+
+  function createFullScreenPopup() {
+    let fullScreenPopup = document.getElementById("fullScreenPopup");
+
+    if (!fullScreenPopup) {
+      fullScreenPopup = document.createElement("div");
+      fullScreenPopup.id = "fullScreenPopup";
+      fullScreenPopup.className = "full-screen-popup";
+      const closeButton = document.createElement("button");
+      closeButton.id = "fullScreenCloseBtn";
+      fullScreenPopup.appendChild(closeButton);
+      document.body.appendChild(fullScreenPopup);
+    }
+
+    const closeButton = fullScreenPopup.querySelector("#fullScreenCloseBtn");
+
+    closeButton.addEventListener("click", function () {
+      fadeOut(fullScreenPopup);
+      fadeIn(elements.centerText);
+      elements.content.classList.remove("blur");
+      isFullScreenPopupVisible = false;
+      isPopupCreated = false;
+    });
+  }
+
+  elements.overlay.addEventListener("click", function (event) {
+    const fullScreenPopup = document.getElementById("fullScreenPopup");
+    if (isFullScreenPopupVisible) {
+      if (!isDescendant(fullScreenPopup, event.target)) {
+        fadeOut(fullScreenPopup);
+        fadeIn(elements.centerText);
+        elements.content.classList.remove("blur");
+        isFullScreenPopupVisible = false;
+        isPopupCreated = false;
+      }
+    } else {
+      handleOverlayClick();
+    }
+  });
+  
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      const fullScreenPopup = document.getElementById("fullScreenPopup");
+      if (isFullScreenPopupVisible) {
+        fadeOut(fullScreenPopup);
+        elements.content.classList.remove("blur");
+        isFullScreenPopupVisible = false;
+        isPopupCreated = false;
+        fadeIn(elements.centerText);
+      } else {
+        handleOverlayClick();
+      }
+    }
+  });
+
+  createFullScreenPopup();
+
+
 });
