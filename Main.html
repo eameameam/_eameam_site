@@ -4,10 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>_eameam</title>
+  <link rel="icon" href="Resources/ico.png" type="image/png">
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
+  <video id="loadingVideo" loop autoplay muted>
+    <source src="Resources/loading.mp4" type="video/mp4">
+  </video>  
   <div id="fullScreenPopup" class="full-screen-popup">
     <button id="fullScreenCloseBtn"></button>
     <div id="fullScreenContent"></div>
@@ -16,9 +20,6 @@
     <img id="logo" src="Resources/logo.png">
     <button id="contactBtn">_contact</button>
     <div id="centerText">Press mouse button</div>
-    <video id="loadingVideo" loop autoplay muted>
-      <source src="Resources/loading.mp4" type="video/mp4">
-    </video>    
   </div>
   <div id="overlay" class="hidden"></div>
   <div id="popup" class="hidden">
