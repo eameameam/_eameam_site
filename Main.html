@@ -28,14 +28,15 @@
         <button id="contactBtn">_contact</button>
         <div id="centerText">Press mouse button</div>
     </div>
-    
+
     <!-- Overlay -->
-    <div id="overlay" class="hidden"></div>
+    <div id="contactOverlay" class="hidden"></div>
+    <div id="fullScreenOverlay" class="hidden"></div>
+    <div id="rmbMenuOverlay" class="hidden"></div>
     
     <!-- Popup Info -->
     <div id="popup">
         <button id="closeBtn"></button>
-        <img src="Resources/LogoPopup.png">
         <div class="info">
             <h2>Technical Animator</h2>
             <p>Mail: <a href="mailto:eam.motion@gmail.com">eam.motion@gmail.com</a></p>
@@ -48,10 +49,38 @@
         <div class="year">2023</div> 
     </div>
 
+    <!-- Hidden content for _anim -->
+    <div id="_anim" style="display:none">
+      ... content for _anim popup ...
+    </div>
+
+    <!-- Hidden content for _rig -->
+    <div id="_rig" style="display:none">
+      ... content for _rig popup ...
+    </div>
+
+    <!-- Hidden content for _anim -->
+    <div id="_unity" style="display:none">
+      ... content for _unity popup ...
+    </div>
+
+    <!-- Hidden content for _rig -->
+    <div id="_unreal" style="display:none">
+      ... content for _unreal popup ...
+    </div>
+
+    <!-- Hidden content for _rig -->
+    <div id="_tools" style="display:none">
+      ... content for _tools popup ...
+    </div>
+
     <!-- JS Script -->
     <script src="mainLogic.js"></script>
-    <script src="pieMenu.js"></script>
     <script src="contactsPopup.js"></script>
+    <script src="fullscreenPopup.js"></script>
+    <script src="pieMenu.js"></script>
+    <script src="rmbMenu.js"></script>
+
 </body>
 
 </html>

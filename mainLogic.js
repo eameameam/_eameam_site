@@ -1,3 +1,8 @@
+let isPopupOpen = false;
+let isFullScreenPopupOpen = false;
+let isPieMenuVisible = false; 
+let isContextMenuOpen = false;
+
 function fade(element, targetOpacity, display = "block", duration = 400) {
     const currentOpacity = parseFloat(getComputedStyle(element).opacity);
     const increment = (targetOpacity - currentOpacity) / duration * 16;

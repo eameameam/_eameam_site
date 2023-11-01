@@ -14,6 +14,10 @@ body {
   filter: blur(5px);
 }
 
+.no-select {
+  user-select: none;
+}
+
 body::before, body::after {
   content: "";
   position: fixed; 
@@ -85,7 +89,7 @@ body::after {
   cursor: default;
 }
 
-#overlay {
+#contactOverlay, #fullScreenOverlay, #rmbMenuOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -95,39 +99,91 @@ body::after {
   background: rgba(0, 0, 0, 0.5);
 }
 
-#pieMenu, #overlay, #popup {
+#pieMenu, #contactOverlay, #fullScreenOverlay, #popup, #rmbMenuOverlay {
   opacity: 0;
   display: none;
+}
+
+.rmbMenu {
+  background: rgba(19, 19, 19, 0.8); 
+  font-size: 13px;
+  padding: 5px 5px; 
+  color: #b1b1b1;
+  border-radius: 6px;  
+  text-align: center;
+  box-sizing: border-box; 
+  cursor: default;
+}
+
+.rmbMenu > div::after {
+  content: "";
+  display: block;
+  width: 3px;
+  height: 100%;
+  position: absolute;
+  right: -3px;
+  top: 0;
+}
+
+.rmbMenu div:hover {
+  color: #f1f1f1; 
+}
+
+#pieMenu{
+  z-index: 3;
 }
 
 .pie-item {
   opacity: 0;
   transition: opacity 0.4s ease-out;
+  z-index: 2;
 }
 
 
-#popup, .full-screen-popup {
+.full-screen-popup {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 9999;
-  border-radius: 20px;  
 }
+
+
 
 #popup {
-  width: 350px;
-  height: 250px;
+  width: 300px;
+  height: 170px;
+  top: 200px;
+  left: 200px;
+  position: fixed;
+  transform: translate(-50%, -50%);
   background: rgba(8, 8, 8, 0.8); 
-  padding-top: 30px;
   align-items: center;
+  font-size: 13px;
+  border-radius: 10px;  
+  z-index: 9999;
 }
 
-#popup img {
-  width: 260px;
-  height: auto;
-  margin: 0 auto; 
-  display: block;
+#closeBtn, #fullScreenCloseBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: url('Resources/close.png') no-repeat center;
+  width: 20px;
+  height: 20px;
+  border: none;
+}
+
+.full-screen-popup {
+  width: 90%;
+  height: 90%;
+  background-color: rgba(3, 3, 3, 0.9);
+  display: none;
+}
+
+#content {
+  position: relative;
+  z-index: 1;
 }
 
 .year {
@@ -155,26 +211,4 @@ body::after {
 .info a {
   color: #636363;
   text-decoration: underline;
-}
-
-#content {
-  position: relative;
-  z-index: 1;
-}
-
-#closeBtn, #fullScreenCloseBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: url('Resources/close.png') no-repeat center;
-  width: 20px;
-  height: 20px;
-  border: none;
-}
-
-.full-screen-popup {
-  width: 90%;
-  height: 90%;
-  background-color: rgba(3, 3, 3, 0.9);
-  display: none;
 }
