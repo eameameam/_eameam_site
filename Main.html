@@ -1,39 +1,57 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>_eameam</title>
-  <link rel="icon" href="Resources/ico.png" type="image/png">
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-</head>
-<body>
-  <video id="loadingVideo" loop autoplay muted>
-    <source src="Resources/loading.mp4" type="video/mp4">
-  </video>  
-  <div id="fullScreenPopup" class="full-screen-popup">
-    <button id="fullScreenCloseBtn"></button>
-    <div id="fullScreenContent"></div>
-  </div>  
-  <div id="content">
-    <img id="logo" src="Resources/logo.png">
-    <button id="contactBtn">_contact</button>
-    <div id="centerText">Press mouse button</div>
-  </div>
-  <div id="overlay" class="hidden"></div>
-  <div id="popup" class="hidden">
-    <button id="closeBtn"></button>
-    <img src="Resources/LogoPopup.png">
-    <div class="info">
-      <h2>Technical Animator</h2>
-      <p>Mail: <a href="mailto:eam.motion@gmail.com">eam.motion@gmail.com</a></p>
-      <p>Tg: <a href="https://t.me/eamotion">@eamotion</a></p>
-      <p>Inst: <a href="https://instagram.com/eam.blinchik">@eam.blinchik</a> / <a href="https://instagram.com/eam.motion">@eam.motion</a></p>
-    </div>
-    <div class="year">2023</div> 
-  </div>
-  <script src="script.js"></script>
-</body>
-</html>
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>_eameam</title>
+    <link rel="icon" href="Resources/ico.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Loading Video -->
+    <video id="loadingVideo" loop autoplay muted>
+        <source src="Resources/loading.mp4" type="video/mp4">
+    </video>  
+    
+    <!-- Full Screen Popup -->
+    <div id="fullScreenPopup" class="full-screen-popup">
+        <button id="fullScreenCloseBtn"></button>
+        <div id="fullScreenContent"></div>
+    </div>
+    
+    <!-- Main Content -->
+    <div id="content">
+        <img id="logo" src="Resources/logo.png">
+        <button id="contactBtn">_contact</button>
+        <div id="centerText">Press mouse button</div>
+    </div>
+    
+    <!-- Overlay -->
+    <div id="overlay" class="hidden"></div>
+    
+    <!-- Popup Info -->
+    <div id="popup">
+        <button id="closeBtn"></button>
+        <img src="Resources/LogoPopup.png">
+        <div class="info">
+            <h2>Technical Animator</h2>
+            <p>Mail: <a href="mailto:eam.motion@gmail.com">eam.motion@gmail.com</a></p>
+            <p>Tg: <a href="https://t.me/eamotion">@eamotion</a></p>
+            <p>Inst: 
+                <a href="https://instagram.com/eam.blinchik">@eam.blinchik</a> / 
+                <a href="https://instagram.com/eam.motion">@eam.motion</a>
+            </p>
+        </div>
+        <div class="year">2023</div> 
+    </div>
+
+    <!-- JS Script -->
+    <script src="mainLogic.js"></script>
+    <script src="pieMenu.js"></script>
+    <script src="contactsPopup.js"></script>
+</body>
+
+</html>
