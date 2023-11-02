@@ -29,47 +29,110 @@ document.addEventListener("DOMContentLoaded", function () {
         return x >= interactiveZone.startX && x <= interactiveZone.endX && y >= interactiveZone.startY && y <= interactiveZone.endY;
     }
 
+
     function createContextMenu(event) {
         lastClickCoords = { x: event.clientX, y: event.clientY };
+    
         contextMenu = document.createElement("div");
         contextMenu.classList.add("rmbMenu");
         contextMenu.style.position = "absolute";
         contextMenu.style.left = `${event.clientX}px`;
         contextMenu.style.top = `${event.clientY}px`;
         contextMenu.style.zIndex = "9999";
-        
+    
         for (const [key, values] of Object.entries(menuStructure)) {
             const menuItem = document.createElement("div");
             menuItem.textContent = key;
     
+            menuItem.addEventListener("click", event => event.stopPropagation());
+            
             if (values.length) {
-                menuItem.addEventListener('mouseover', function(event) {
+                menuItem.addEventListener('mouseover', () => {
                     createSubMenu(key, menuItem.getBoundingClientRect());
+                    menuItem.style.color = '#f1f1f1';
                 });
-    
-                menuItem.addEventListener('mouseout', function(event) {
-                    if (subMenu && !subMenu.contains(event.relatedTarget) && !this.contains(event.relatedTarget)) {
+                menuItem.addEventListener('mouseout', event => {
+                    if (subMenu && !subMenu.contains(event.relatedTarget) && !menuItem.contains(event.relatedTarget)) {
                         document.body.removeChild(subMenu);
                         subMenu = null;
                     }
+                    menuItem.style.color = '#b1b1b1';
                 });
+            } else {
+                menuItem.addEventListener('mouseover', () => menuItem.style.color = '#f1f1f1');
+                menuItem.addEventListener('mouseout', () => menuItem.style.color = '#b1b1b1');
             }
-            
-            menuItem.addEventListener('mouseover', function() {
-                this.style.color = '#f1f1f1'; 
-            });
-        
-            menuItem.addEventListener('mouseout', function() {
-                this.style.color = '#b1b1b1'; 
-            });
-        
+    
             contextMenu.appendChild(menuItem);
         }      
-
         document.body.appendChild(contextMenu);
     }
-
+    
     function toggleContextMenu(show = false, event) {
+        if (isPopupOpen || isFullScreenPopupOpen || isPieMenuVisible) {
+            return;
+        }
+    
+        if (isContextMenuOpen) {
+            closeAllMenus();
+        }
+    
+        if (show && isCustomContextMenuEnabled && isInInteractiveZone(event.clientX, event.clientY)) {
+            if (!document.getElementById("rmbMenuOverlay")) {
+                document.body.appendChild(rmbMenuElements.overlay);
+            }
+            rmbMenuElements.content.classList.add("blur");
+            rmbMenuElements.overlay.style.opacity = 0.5;
+    
+            createContextMenu(event);
+            isContextMenuOpen = true;
+        }
+    }
+    
+    function createSubMenu(key, rect) {
+        if (subMenu) {
+            document.body.removeChild(subMenu);
+        }
+    
+        subMenu = document.createElement("div");
+        styleAndAppendSubMenu(subMenu, rect);
+        const subMenuItems = menuStructure[key];
+    
+        for (const subItem of subMenuItems) {
+            const menuItem = createSubMenuItems(subItem);
+            subMenu.appendChild(menuItem);
+        }
+        document.body.appendChild(subMenu);
+    }
+    
+    function styleAndAppendSubMenu(menu, rect) {
+        menu.classList.add("rmbMenu");
+        menu.style.position = "absolute";
+        menu.style.left = `${rect.right}px`;
+        menu.style.top = `${rect.top}px`;
+        menu.style.zIndex = "10000";
+        menu.addEventListener('mouseleave', handleSubMenuMouseLeave);
+    }
+    
+    function createSubMenuItems(subItem) {
+        const menuItem = document.createElement("div");
+        menuItem.textContent = subItem;
+        menuItem.addEventListener('mouseover', () => menuItem.style.color = '#f1f1f1');
+        menuItem.addEventListener('mouseout', () => menuItem.style.color = '#b1b1b1');
+        menuItem.addEventListener("click", () => toggleContextMenu(false));
+        return menuItem;
+    }
+    
+    
+    function outsideClickHandler(event) {
+        if (isContextMenuOpen && 
+            !contextMenu.contains(event.target) && 
+            (!subMenu || !subMenu.contains(event.target))) {
+            closeAllMenus();
+        }
+    }
+    
+    function closeAllMenus() {
         if (isContextMenuOpen) {
             rmbMenuElements.overlay.style.opacity = 0;
             rmbMenuElements.content.classList.remove("blur");
@@ -77,85 +140,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.body.removeChild(contextMenu);
                 contextMenu = null;
             }
+            if (subMenu) {
+                document.body.removeChild(subMenu);
+                subMenu = null;
+            }
             isContextMenuOpen = false;
-        }
-
-        if (show) {
-            if (!isCustomContextMenuEnabled || !isInInteractiveZone(event.clientX, event.clientY)) {
-                return;
-            }
-
-            if (!document.getElementById("rmbMenuOverlay")) {
-                document.body.appendChild(rmbMenuElements.overlay);
-            }
-            rmbMenuElements.content.classList.add("blur");
-            rmbMenuElements.overlay.style.opacity = 0.5;
-
-            createContextMenu(event);
-            isContextMenuOpen = true;
+            document.removeEventListener("click", outsideClickHandler); 
         }
     }
-
-    function createSubMenu(key, rect) {
-        if (subMenu) {
-            document.body.removeChild(subMenu);
+    
+    function handleContextMenu(event) {
+        if (isCustomContextMenuEnabled) {
+            event.preventDefault();
+            toggleContextMenu(true, event);
+            document.addEventListener("click", outsideClickHandler); 
         }
-    
-        subMenu = document.createElement("div");
-        subMenu.classList.add("rmbMenu");
-        subMenu.style.position = "absolute";
-        subMenu.style.left = `${rect.right}px`;  // This ensures the submenu is to the right of the main menu item
-        subMenu.style.top = `${rect.top}px`;
-        subMenu.style.zIndex = "10000";
-    
-        subMenu.addEventListener('mouseleave', handleSubMenuMouseLeave);
-    
-        const subMenuItems = menuStructure[key];
-        for (const subItem of subMenuItems) {
-            const menuItem = document.createElement("div");
-            menuItem.textContent = subItem;
-    
-            menuItem.addEventListener('mouseover', function() {
-                this.style.color = '#f1f1f1';
-            });
-    
-            menuItem.addEventListener('mouseout', function() {
-                this.style.color = '#b1b1b1';
-            });
-    
-            subMenu.appendChild(menuItem);
-        }
-    
-        document.body.appendChild(subMenu);
     }
     
-    
-
     function handleSubMenuMouseLeave() {
         document.body.removeChild(subMenu);
         subMenu = null;
     }
-
-    rmbMenuElements.overlay.addEventListener("click", function() {
-        toggleContextMenu(false);
-    });    
-
-    document.addEventListener("contextmenu", function (event) {
-        if (isCustomContextMenuEnabled) {
-            event.preventDefault();  
-            toggleContextMenu(true, event);
-        }
-    });
-
-    document.addEventListener("click", function(event) {
-        if (isContextMenuOpen && contextMenu && !contextMenu.contains(event.target)) {
-            toggleContextMenu(false);
-        }
-    });
-
+    
+    rmbMenuElements.overlay.addEventListener('click', closeAllMenus);
+    document.addEventListener("contextmenu", handleContextMenu);
     document.addEventListener("keydown", function (event) {
         if (event.key === "Escape") {
-            toggleContextMenu();
+            toggleContextMenu(false);
         }
-    });
+    });    
 });
