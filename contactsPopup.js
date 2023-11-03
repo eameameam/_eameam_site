@@ -2,33 +2,23 @@ document.addEventListener("DOMContentLoaded", function () {
     const elements = {
         contactBtn: document.getElementById("contactBtn"),
         popup: document.getElementById("popup"),
-        closeBtn: document.getElementById("closeBtn"),
-        content: document.getElementById("content"),
-        overlay: document.getElementById("contactOverlay")
+        overlay: document.getElementById("contactOverlay"),
+        centerText: document.getElementById("centerText")
     };
 
-    elements.popup.style.opacity = 0;
-    elements.overlay.style.opacity = 0;
+    elements.contactBtn.addEventListener("click", () => togglePopup(true));
 
-    function togglePopup(show = false) {
-        if (show) {
+    window.togglePopup = function(show = false) {
+        if (show && !state.isPopupOpen) {
+            stateContactPopup();
             fade(elements.popup, 1);
             fade(elements.overlay, 1);
-            isPopupOpen = true;
+            fade(elements.centerText, 0);
         } else {
+            closeAllStates();
             fade(elements.popup, 0);
             fade(elements.overlay, 0);
-            isPopupOpen = false;
+            fade(elements.centerText, 1);
         }
     }
-
-    elements.contactBtn.addEventListener("click", () => togglePopup(true));
-    elements.closeBtn.addEventListener("click", () => togglePopup());
-    elements.overlay.addEventListener("click", () => togglePopup());
-
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-            togglePopup();
-        }
-    });
 });

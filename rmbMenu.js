@@ -2,20 +2,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let contextMenu = null;
     let subMenu = null;
     let isCustomContextMenuEnabled = true;
-    let isContextMenuOpen = false;
 
     const rmbMenuElements = {
         content: document.getElementById("content"),
         overlay: document.getElementById("rmbMenuOverlay")
     };
 
-    const interactiveZone = {
-        startX: window.innerWidth * 0.15,
-        endX: window.innerWidth * 0.85,
-        startY: window.innerHeight * 0.15,
-        endY: window.innerHeight * 0.85
-    };
-    
     const menuStructure = {
         "Body": ["Body1", "Body2", "Body3", "Body4", "Body5"],
         "Hands": ["Hands1", "Hands2", "Hands3", "Hands4", "Hands5"],
@@ -24,11 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
         "Face": ["Face1", "Face2", "Face3", "Face4", "Face5"],
         "Export": ["Png", "Fbx"]
     };
-
-    function isInInteractiveZone(x, y) {
-        return x >= interactiveZone.startX && x <= interactiveZone.endX && y >= interactiveZone.startY && y <= interactiveZone.endY;
-    }
-
 
     function createContextMenu(event) {
         lastClickCoords = { x: event.clientX, y: event.clientY };
@@ -69,11 +56,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     function toggleContextMenu(show = false, event) {
-        if (isPopupOpen || isFullScreenPopupOpen || isPieMenuVisible) {
+        if (state.isPopupOpen || state.isFullScreenPopupOpen || state.isPieMenuVisible) {
             return;
         }
     
-        if (isContextMenuOpen) {
+        if (state.isContextMenuOpen) {
             closeAllMenus();
         }
     
@@ -85,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
             rmbMenuElements.overlay.style.opacity = 0.5;
     
             createContextMenu(event);
-            isContextMenuOpen = true;
+            setState("isContextMenuOpen");
         }
     }
     
@@ -125,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     
     function outsideClickHandler(event) {
-        if (isContextMenuOpen && 
+        if (state.isContextMenuOpen && 
             !contextMenu.contains(event.target) && 
             (!subMenu || !subMenu.contains(event.target))) {
             closeAllMenus();
@@ -133,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     function closeAllMenus() {
-        if (isContextMenuOpen) {
+        if (state.isContextMenuOpen) {
             rmbMenuElements.overlay.style.opacity = 0;
             rmbMenuElements.content.classList.remove("blur");
             if (contextMenu) {
@@ -144,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.body.removeChild(subMenu);
                 subMenu = null;
             }
-            isContextMenuOpen = false;
+            setState("");
             document.removeEventListener("click", outsideClickHandler); 
         }
     }
@@ -161,12 +148,8 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.removeChild(subMenu);
         subMenu = null;
     }
-    
-    rmbMenuElements.overlay.addEventListener('click', closeAllMenus);
-    document.addEventListener("contextmenu", handleContextMenu);
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-            toggleContextMenu(false);
-        }
-    });    
+
+    window.closeAllMenus = closeAllMenus;
+
+    document.addEventListener("contextmenu", handleContextMenu); 
 });

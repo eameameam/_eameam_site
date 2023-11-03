@@ -1,43 +1,29 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const fullScreenElements = {
+    const elements = {
         popup: document.getElementById("fullScreenPopup"),
-        closeBtn: document.getElementById("fullScreenCloseBtn"),
         content: document.getElementById("fullScreenContent"),
-        overlay: document.getElementById("fullScreenOverlay")
+        centerText: document.getElementById("centerText"),
+        mainContent: document.getElementById("content")
     };
 
-    const mainContent = document.getElementById("content");
-
-    fullScreenElements.popup.style.opacity = 0;
-    fullScreenElements.overlay.style.opacity = 0;
-
     window.toggleFullScreenPopup = function(show = false, contentElementId = null) {
-
-        if (!fullScreenElements.popup || !fullScreenElements.content) return;
-
+        if (!elements.popup || !elements.content) return;
+    
         if (show && contentElementId) {
             const content = document.getElementById(contentElementId);
             if (content) {
-                fullScreenElements.content.innerHTML = content.innerHTML;
+                elements.content.innerHTML = content.innerHTML;
             }
-            fade(fullScreenElements.popup, 1);
-            mainContent.classList.add("blur");
-            isFullScreenPopupOpen = true;
-            fullScreenElements.overlay.style.display = "block";
+            stateFullScreenPopup();
+            blur(elements.mainContent, 1);
+            fade(elements.popup, 1);
+            fade(elements.centerText, 0);
+
         } else {
-            fade(fullScreenElements.popup, 0);
-            mainContent.classList.remove("blur");
-            isFullScreenPopupOpen = false;
-            fullScreenElements.overlay.style.display = "none";
+            closeAllStates();
+            blur(elements.mainContent, 0);
+            fade(elements.popup, 0);
+            fade(elements.centerText, 1);
         }
     }
-
-    fullScreenElements.closeBtn.addEventListener("click", () => toggleFullScreenPopup(false));
-    fullScreenElements.overlay.addEventListener("click", () => toggleFullScreenPopup());
-
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-            toggleFullScreenPopup();
-        }
-    });
 });
