@@ -10,12 +10,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.togglePopup = function(show = false) {
         if (show && !state.isPopupOpen) {
-            stateContactPopup();
+            toggleState("isPopupOpen");
             fade(elements.popup, 1);
             fade(elements.overlay, 1);
             fade(elements.centerText, 0);
         } else {
-            closeAllStates();
+            toggleState();
             fade(elements.popup, 0);
             fade(elements.overlay, 0);
             fade(elements.centerText, 1);

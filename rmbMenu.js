@@ -18,8 +18,8 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     function createContextMenu(event) {
+        toggleState('isContextMenuOpen');
         console.log('Creating main context menu.');
-        stateContextMenu();
         state.isContextMenuOpen = true;
         console.log('Текущее состояние в createContextMenu 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         lastClickCoords = { x: event.clientX, y: event.clientY };
@@ -60,19 +60,16 @@ document.addEventListener("DOMContentLoaded", function () {
     
     function toggleContextMenu(show = false, event) {
         console.log('Текущее состояние в toggleContextMenu 1 state.isContextMenuOpen:', state.isContextMenuOpen);
-
         if (state.isPopupOpen || state.isFullScreenPopupOpen || state.isPieMenuVisible) {
             return;
         }
-        
+
         if (state.isContextMenuOpen) {
             closeAllMenus();
-            
         }
     
         if (show && isCustomContextMenuEnabled && isInInteractiveZone(event.clientX, event.clientY)) {
             console.log('Текущее состояние в toggleContextMenu 2 state.isContextMenuOpen:', state.isContextMenuOpen);
-
             if (!document.getElementById("rmbMenuOverlay")) {
                 document.body.appendChild(rmbMenuElements.overlay);
             }
@@ -82,6 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
             createContextMenu(event);
         }
     }
+
     
     function createSubMenu(key, rect) {
         if (subMenu) {
@@ -119,7 +117,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return menuItem;
     }
     
-    
     function outsideClickHandler(event) {
         if (!subMenu || !subMenu.contains(event.target)) {
             closeAllMenus();
@@ -134,19 +131,18 @@ document.addEventListener("DOMContentLoaded", function () {
             if (contextMenu) {
                 document.body.removeChild(contextMenu);
                 contextMenu = null;
-                console.log('same here hahaha.');
             }
             if (subMenu) {
                 document.body.removeChild(subMenu);
                 subMenu = null;
-                console.log('ive no idea what is that.');
             }
             console.log('trying to close menu');
             document.removeEventListener("click", outsideClickHandler); 
+
         }
         console.log('isnt trying to close menu');
     }
-    
+
     function handleContextMenu(event) {
         console.log('Текущее состояние в handleContextMenu 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         if (isCustomContextMenuEnabled) {
@@ -156,6 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.addEventListener("click", outsideClickHandler);
         }
     }
+
 
     function handleSubMenuMouseLeave() {
         document.body.removeChild(subMenu);
@@ -167,12 +164,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function handleSubMenuItemClick(subItem) {
         console.log(`Выбран пункт: ${subItem}`);
         console.log('Текущее состояние в handleSubMenuItemClick 1 state.isContextMenuOpen:', state.isContextMenuOpen);
-        closeAllMenus();
+        toggleState();
     }
     
-
-
-
 
     window.closeAllMenus = closeAllMenus;
     window.toggleContextMenu = toggleContextMenu;

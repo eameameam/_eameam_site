@@ -3,23 +3,13 @@ let endCircle = null;
 let line = null;
 let popups = [];
 
-
-function createCircle(event) {
-    circle = document.createElement("div");
-    circle.style = "width: 10px; height: 10px; background: rgba(130, 130, 130, 0.9); position: absolute; border-radius: 50%; z-index: 3;";
-    circle.style.left = (event.clientX - 5) + "px";
-    circle.style.top = (event.clientY - 5) + "px";
-    document.body.appendChild(circle);
-    return circle;
-}
-
-function createEndCircle(event) {
-    endCircle = document.createElement("div");
-    endCircle.style = "width: 10px; height: 10px; background: rgba(130, 130, 130, 0.9); position: absolute; border-radius: 50%; z-index: 3;";
-    endCircle.style.left = (event.clientX - 5) + "px";
-    endCircle.style.top = (event.clientY - 5) + "px";
-    document.body.appendChild(endCircle);
-    return endCircle;
+function createCircleElement(event, isEndCircle = false) {
+    const circleElem = document.createElement("div");
+    circleElem.style = "width: 10px; height: 10px; background: rgba(130, 130, 130, 0.9); position: absolute; border-radius: 50%; z-index: 3;";
+    circleElem.style.left = (event.clientX - 5) + "px";
+    circleElem.style.top = (event.clientY - 5) + "px";
+    document.body.appendChild(circleElem);
+    return circleElem;
 }
 
 function updateEndCirclePosition(event) {
@@ -29,6 +19,10 @@ function updateEndCirclePosition(event) {
 }
 
 function drawLine(event) {
+    if (!circle || !endCircle || !line) {
+        return;
+    }
+
     let x1 = circle.offsetLeft + 5;
     let y1 = circle.offsetTop + 5;
     let x2 = event.clientX;
@@ -44,7 +38,7 @@ function drawLine(event) {
     line.style.transform = `rotate(${angle}deg)`;
     
     updateEndCirclePosition(event);
-    
+        
     popups.forEach((popup) => {
         if (popup.dataset.name === '_header') return; 
 
@@ -72,3 +66,29 @@ function createLine(event) {
     return line;
 }
 
+function renderInteractiveComponents(event) {
+    if (!circle) circle = createCircleElement(event);
+    if (!endCircle) endCircle = createCircleElement(event, true);
+    if (!line) line = createLine(event);
+    document.addEventListener("mousemove", drawLine);
+}
+
+function clearInteractiveComponents() {
+    popups.forEach(popup => {
+        document.body.removeChild(popup);
+    });
+    popups = [];
+    if (circle) {
+        document.body.removeChild(circle);
+        circle = null;
+    }
+    if (endCircle) {
+        document.body.removeChild(endCircle);
+        endCircle = null;
+    }
+    if (line) {
+        document.body.removeChild(line);
+        line = null;
+    }
+    document.removeEventListener("mousemove", drawLine);
+}

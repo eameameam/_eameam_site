@@ -4,54 +4,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (state.isFullScreenPopupOpen) {
             toggleFullScreenPopup(false);
-            closeAllStates();
         } else if (state.isPopupOpen) {
             togglePopup(false);
-            closeAllStates();
         } else if (state.isContextMenuOpen) {
             toggleContextMenu(false);
-            closeAllStates();
         }
+        toggleState();
     });
 
     const overlays = {
-        contactOverlay: document.getElementById("contactOverlay"),
-        fullScreenOverlay: document.getElementById("fullScreenOverlay"),
-        rmbMenuOverlay: document.getElementById("rmbMenuOverlay")
+        contactOverlay: "isPopupOpen",
+        fullScreenOverlay: "isFullScreenPopupOpen",
+        rmbMenuOverlay: "isContextMenuOpen"
     };
 
     for (let key in overlays) {
-        if (overlays[key]) {
-            overlays[key].addEventListener("click", function() {
-                if (key === "contactOverlay") {
+        const elem = document.getElementById(key);
+        if (elem) {
+            elem.addEventListener("click", function() {
+                if (overlays[key] === "isPopupOpen") {
                     togglePopup(false);
-                    closeAllStates();
-                } else if (key === "fullScreenOverlay") {
+                } else if (overlays[key] === "isFullScreenPopupOpen") {
                     toggleFullScreenPopup(false);
-                    closeAllStates();
-                } else if (key === "rmbMenuOverlay") {
-                    closeAllMenus(false);
-                    closeAllStates();
+                } else if (overlays[key] === "isContextMenuOpen") {
+                    toggleContextMenu(false);
                 }
+                toggleState();
             });
         }
     }
 
     const closeButtons = {
-        closeBtn: document.getElementById("closeBtn"),
-        fullScreenCloseBtn: document.getElementById("fullScreenCloseBtn")
+        closeBtn: "isPopupOpen",
+        fullScreenCloseBtn: "isFullScreenPopupOpen"
     };
 
     for (let key in closeButtons) {
-        if (closeButtons[key]) {
-            closeButtons[key].addEventListener("click", function() {
-                if (key === "closeBtn") {
+        const btn = document.getElementById(key);
+        if (btn) {
+            btn.addEventListener("click", function() {
+                if (closeButtons[key] === "isPopupOpen") {
                     togglePopup(false);
-                    closeAllStates();
-                } else if (key === "fullScreenCloseBtn") {
+                } else if (closeButtons[key] === "isFullScreenPopupOpen") {
                     toggleFullScreenPopup(false);
-                    closeAllStates();
                 }
+                toggleState();
             });
         }
     }

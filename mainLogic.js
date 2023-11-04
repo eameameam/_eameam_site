@@ -5,31 +5,16 @@ const state = {
     isContextMenuOpen: false
 };
 
-function stateContactPopup() {
-    closeAllStates();
-    state.isPopupOpen = true;
-}
-
-function stateFullScreenPopup() {
-    closeAllStates();
-    state.isFullScreenPopupOpen = true;
-}
-
-function statePieMenu() {
-    closeAllStates();
-    state.isPieMenuVisible = true;
-}
-
-function stateContextMenu() {
-    closeAllStates();
-    state.isContextMenuOpen = true;
-}
-
-function closeAllStates() {
-    for (const key in state) {
+function toggleState(menuType) {
+    for (let key in state) {
         state[key] = false;
     }
+
+    if (menuType && state.hasOwnProperty(menuType)) {
+        state[menuType] = true;
+    }
 }
+
 
 const elementsOpacity = {
     popup: document.getElementById("popup"),
