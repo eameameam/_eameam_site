@@ -4,10 +4,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (state.isFullScreenPopupOpen) {
             toggleFullScreenPopup(false);
+            closeAllStates();
         } else if (state.isPopupOpen) {
             togglePopup(false);
+            closeAllStates();
         } else if (state.isContextMenuOpen) {
             toggleContextMenu(false);
+            closeAllStates();
         }
     });
 
@@ -22,10 +25,13 @@ document.addEventListener("DOMContentLoaded", function () {
             overlays[key].addEventListener("click", function() {
                 if (key === "contactOverlay") {
                     togglePopup(false);
+                    closeAllStates();
                 } else if (key === "fullScreenOverlay") {
                     toggleFullScreenPopup(false);
+                    closeAllStates();
                 } else if (key === "rmbMenuOverlay") {
                     closeAllMenus(false);
+                    closeAllStates();
                 }
             });
         }
@@ -41,8 +47,10 @@ document.addEventListener("DOMContentLoaded", function () {
             closeButtons[key].addEventListener("click", function() {
                 if (key === "closeBtn") {
                     togglePopup(false);
+                    closeAllStates();
                 } else if (key === "fullScreenCloseBtn") {
                     toggleFullScreenPopup(false);
+                    closeAllStates();
                 }
             });
         }

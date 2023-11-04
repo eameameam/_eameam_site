@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
             blur(elements.mainContent, 1);
             fade(elements.popup, 1);
             fade(elements.centerText, 0);
+            document.body.classList.remove("no-select");
 
         } else {
             closeAllStates();

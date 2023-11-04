@@ -49,31 +49,27 @@ elementsOpacity.centerText.style.opacity = 1;
 
 
 function fade(element, targetOpacity, display = "block", duration = 400) {
-    const currentOpacity = parseFloat(getComputedStyle(element).opacity);
-    const increment = (targetOpacity - currentOpacity) / duration * 16;
+    if (!element.classList.contains("fade-transition")) {
+        element.classList.add("fade-transition");
+    }
+    
+    element.style.transitionDuration = `${duration}ms`;
 
-    if (targetOpacity > currentOpacity) {
+    if (targetOpacity === 1) {
         element.style.display = display;
-    }
-
-    function adjustOpacity(timestamp) {
-        const newOpacity = parseFloat(element.style.opacity) + increment;
-        element.style.opacity = newOpacity;
-
-        if ((increment > 0 && newOpacity < targetOpacity) || (increment < 0 && newOpacity > targetOpacity)) {
-            requestAnimationFrame(adjustOpacity);
-        } else {
-            element.style.opacity = targetOpacity;
-            if (targetOpacity == 0) {
-                setTimeout(() => {
-                    element.style.display = "none";
-                }, 100);
+        setTimeout(() => { 
+            element.style.opacity = targetOpacity; 
+        }, 0);
+    } else {
+        element.style.opacity = targetOpacity;
+        setTimeout(() => {
+            if (parseFloat(getComputedStyle(element).opacity) === 0) {
+                element.style.display = "none";
             }
-        }
+        }, duration);
     }
-
-    requestAnimationFrame(adjustOpacity);
 }
+
 
 function blur(element, applyBlur = true) {
     if (!element.classList.contains("blur-transition")) {

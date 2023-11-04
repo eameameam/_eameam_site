@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
         clearInteractiveComponents(circle, line, popups);
         document.body.classList.remove("no-select");
         closeAllStates();
-        if (!state.fullscreenPopup) {
+        if (!state.isFullScreenPopupOpen) {
             blur(elements.content, 0);
             fade(elements.centerText, 1);
         }
@@ -34,15 +34,20 @@ document.addEventListener("DOMContentLoaded", function() {
     
     function attachPopupsToDOM() {
         popups.forEach(popup => {
-            popup.style.opacity = 1;
             document.body.appendChild(popup);
-            popup.addEventListener("mouseenter", clearPieMenu);
+        });
+        popups.forEach(popup => {
+            if (popup.dataset.name !== '_header') {
+                popup.addEventListener("mouseenter", clearPieMenu);
+            }
         });
         statePieMenu();
         document.body.classList.add("no-select");
         blur(elements.content, 1);
         fade(elements.centerText, 0);
     }
+    
+
     
     function attachGlobalListeners() {
         document.addEventListener("mousemove", drawLine);
@@ -63,7 +68,6 @@ document.addEventListener("DOMContentLoaded", function() {
     
     function createPieMenuItem(config, event) {
         const isHeader = config.name === '_header';
-    
         const popupOptions = {
             styles: {
                 width: isHeader ? '300px' : '200px',
@@ -79,11 +83,20 @@ document.addEventListener("DOMContentLoaded", function() {
         };
         
         const menuItem = createPopup(popupOptions);
+        menuItem.dataset.name = config.name;
+        
         if (!isHeader) {
-            menuItem.addEventListener("mouseenter", () => toggleFullScreenPopup(true, config.name));
+            menuItem.addEventListener("mouseenter", () => {
+                toggleFullScreenPopup(true, config.name);
+            });
+
+        }
+        else {
+            menuItem.addEventListener("mouseenter", onPieMenuItemEnter);
         }
         return menuItem;
     }
+    
 
     document.addEventListener("mousedown", function(event) {
         if (event.button === 0 && !state.isContextMenuOpen) {
@@ -123,14 +136,9 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         popups.forEach(popup => {
             document.body.removeChild(popup);
-            popup.removeEventListener("mouseenter", onPieMenuItemEnter);
         });
         popups = [];
         document.removeEventListener("mousemove", drawLine);
-        document.body.classList.remove("no-select");
-        if (elements && elements.content) {
-            elements.content.classList.remove("blur");
-        }
     }
     
 });

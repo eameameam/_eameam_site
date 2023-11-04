@@ -18,6 +18,10 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     function createContextMenu(event) {
+        console.log('Creating main context menu.');
+        stateContextMenu();
+        state.isContextMenuOpen = true;
+        console.log('Текущее состояние в createContextMenu 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         lastClickCoords = { x: event.clientX, y: event.clientY };
     
         contextMenu = document.createElement("div");
@@ -30,8 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
         for (const [key, values] of Object.entries(menuStructure)) {
             const menuItem = document.createElement("div");
             menuItem.textContent = key;
-    
-            menuItem.addEventListener("click", event => event.stopPropagation());
             
             if (values.length) {
                 menuItem.addEventListener('mouseover', () => {
@@ -53,26 +55,31 @@ document.addEventListener("DOMContentLoaded", function () {
             contextMenu.appendChild(menuItem);
         }      
         document.body.appendChild(contextMenu);
+        
     }
     
     function toggleContextMenu(show = false, event) {
+        console.log('Текущее состояние в toggleContextMenu 1 state.isContextMenuOpen:', state.isContextMenuOpen);
+
         if (state.isPopupOpen || state.isFullScreenPopupOpen || state.isPieMenuVisible) {
             return;
         }
-    
+        
         if (state.isContextMenuOpen) {
             closeAllMenus();
+            
         }
     
         if (show && isCustomContextMenuEnabled && isInInteractiveZone(event.clientX, event.clientY)) {
+            console.log('Текущее состояние в toggleContextMenu 2 state.isContextMenuOpen:', state.isContextMenuOpen);
+
             if (!document.getElementById("rmbMenuOverlay")) {
                 document.body.appendChild(rmbMenuElements.overlay);
             }
-            rmbMenuElements.content.classList.add("blur");
+            blur(rmbMenuElements.content, 1);
             rmbMenuElements.overlay.style.opacity = 0.5;
     
             createContextMenu(event);
-            setState("isContextMenuOpen");
         }
     }
     
@@ -90,6 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
             subMenu.appendChild(menuItem);
         }
         document.body.appendChild(subMenu);
+        console.log(`Creating sub-menu for ${key}.`);
     }
     
     function styleAndAppendSubMenu(menu, rect) {
@@ -102,54 +110,73 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     function createSubMenuItems(subItem) {
+        console.log('Текущее состояние в createSubMenuItems 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         const menuItem = document.createElement("div");
         menuItem.textContent = subItem;
         menuItem.addEventListener('mouseover', () => menuItem.style.color = '#f1f1f1');
         menuItem.addEventListener('mouseout', () => menuItem.style.color = '#b1b1b1');
-        menuItem.addEventListener("click", () => toggleContextMenu(false));
+        menuItem.addEventListener("click", () => handleSubMenuItemClick(subItem));
         return menuItem;
     }
     
     
     function outsideClickHandler(event) {
-        if (state.isContextMenuOpen && 
-            !contextMenu.contains(event.target) && 
-            (!subMenu || !subMenu.contains(event.target))) {
+        if (!subMenu || !subMenu.contains(event.target)) {
             closeAllMenus();
         }
     }
     
     function closeAllMenus() {
+        console.log('Текущее состояние в closeAllMenus 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         if (state.isContextMenuOpen) {
             rmbMenuElements.overlay.style.opacity = 0;
-            rmbMenuElements.content.classList.remove("blur");
+            blur(rmbMenuElements.content, 0);
             if (contextMenu) {
                 document.body.removeChild(contextMenu);
                 contextMenu = null;
+                console.log('same here hahaha.');
             }
             if (subMenu) {
                 document.body.removeChild(subMenu);
                 subMenu = null;
+                console.log('ive no idea what is that.');
             }
-            setState("");
+            console.log('trying to close menu');
             document.removeEventListener("click", outsideClickHandler); 
         }
+        console.log('isnt trying to close menu');
     }
     
     function handleContextMenu(event) {
+        console.log('Текущее состояние в handleContextMenu 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         if (isCustomContextMenuEnabled) {
+            console.log('Текущее состояние в handleContextMenu 2 state.isContextMenuOpen:', state.isContextMenuOpen);
             event.preventDefault();
             toggleContextMenu(true, event);
-            document.addEventListener("click", outsideClickHandler); 
+            document.addEventListener("click", outsideClickHandler);
         }
     }
-    
+
     function handleSubMenuMouseLeave() {
         document.body.removeChild(subMenu);
         subMenu = null;
+        console.log('leave');
+        console.log('Текущее состояние в handleSubMenuMouseLeave 1 state.isContextMenuOpen:', state.isContextMenuOpen);
     }
 
-    window.closeAllMenus = closeAllMenus;
+    function handleSubMenuItemClick(subItem) {
+        console.log(`Выбран пункт: ${subItem}`);
+        console.log('Текущее состояние в handleSubMenuItemClick 1 state.isContextMenuOpen:', state.isContextMenuOpen);
+        closeAllMenus();
+    }
+    
 
-    document.addEventListener("contextmenu", handleContextMenu); 
+
+
+
+    window.closeAllMenus = closeAllMenus;
+    window.toggleContextMenu = toggleContextMenu;
+
+    document.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("mousedown", outsideClickHandler);
 });

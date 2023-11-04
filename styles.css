@@ -18,6 +18,10 @@ body {
   transition: filter 0.3s ease-in-out;
 }
 
+.fade-transition {
+  transition: opacity 400ms ease-in-out;
+}
+
 .no-select {
   user-select: none;
 }
