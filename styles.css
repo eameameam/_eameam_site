@@ -97,7 +97,7 @@ body::after {
   cursor: default;
 }
 
-#contactOverlay, #fullScreenOverlay, #rmbMenuOverlay {
+#overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -107,7 +107,7 @@ body::after {
   background: rgba(0, 0, 0, 0.5);
 }
 
-#pieMenu, #contactOverlay, #fullScreenOverlay, #popup, #rmbMenuOverlay {
+#pieMenu, #overlay {
   opacity: 0;
   display: none;
 }
@@ -147,6 +147,15 @@ body::after {
   z-index: 2;
 }
 
+.pieMenu {
+  display: none;
+  /* other styles */
+}
+
+.pieMenu.visible {
+  display: block;
+  /* adjust display as needed, could be flex, grid, etc. */
+}
 
 .full-screen-popup {
   position: fixed;
@@ -156,9 +165,7 @@ body::after {
   z-index: 9999;
 }
 
-
-
-#popup {
+#contactPopup {
   width: 300px;
   height: 170px;
   top: 200px;
@@ -172,7 +179,7 @@ body::after {
   z-index: 9999;
 }
 
-#closeBtn, #fullScreenCloseBtn {
+#contactCloseBtn, #fullScreenCloseBtn {
   position: absolute;
   top: 10px;
   right: 10px;

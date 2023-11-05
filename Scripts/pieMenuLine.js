@@ -1,7 +1,7 @@
 let circle = null;
 let endCircle = null;
 let line = null;
-let popups = [];
+
 
 function createCircleElement(event, isEndCircle = false) {
     const circleElem = document.createElement("div");
@@ -39,7 +39,9 @@ function drawLine(event) {
     
     updateEndCirclePosition(event);
         
-    popups.forEach((popup) => {
+    popups.forEach((popupId) => {
+        const popup = document.getElementById(popupId);
+        if (!popup || !popup.dataset) return; 
         if (popup.dataset.name === '_header') return; 
 
         let popupRect = popup.getBoundingClientRect();
@@ -73,22 +75,4 @@ function renderInteractiveComponents(event) {
     document.addEventListener("mousemove", drawLine);
 }
 
-function clearInteractiveComponents() {
-    popups.forEach(popup => {
-        document.body.removeChild(popup);
-    });
-    popups = [];
-    if (circle) {
-        document.body.removeChild(circle);
-        circle = null;
-    }
-    if (endCircle) {
-        document.body.removeChild(endCircle);
-        endCircle = null;
-    }
-    if (line) {
-        document.body.removeChild(line);
-        line = null;
-    }
-    document.removeEventListener("mousemove", drawLine);
-}
+

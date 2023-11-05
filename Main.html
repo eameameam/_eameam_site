@@ -28,14 +28,13 @@
         <button id="contactBtn">_contact</button>
     </div>
     <div id="centerText">Press mouse button</div>
+
     <!-- Overlay -->
-    <div id="contactOverlay" class="hidden"></div>
-    <div id="fullScreenOverlay" class="hidden"></div>
-    <div id="rmbMenuOverlay" class="hidden"></div>
+    <div id="overlay" class="hidden"></div>
     
     <!-- Popup Info -->
-    <div id="popup">
-        <button id="closeBtn"></button>
+    <div id="contactPopup">
+        <button id="contactCloseBtn"></button>
         <div class="info">
             <h2>Technical Animator</h2>
             <p>Mail: <a href="mailto:eam.motion@gmail.com">eam.motion@gmail.com</a></p>
@@ -49,42 +48,46 @@
     </div>
 
     <!-- Hidden content for _anim -->
-    <div id="_anim" style="display:none">
+    <div id="_anim" class="pieMenu" style="display:none">
       ... content for _anim popup ...
     </div>
 
     <!-- Hidden content for _rig -->
-    <div id="_rig" style="display:none">
+    <div id="_rig" class="pieMenu" style="display:none">
       ... content for _rig popup ...
     </div>
 
-    <!-- Hidden content for _anim -->
-    <div id="_unity" style="display:none">
+    <!-- Hidden content for _unity -->
+    <div id="_unity" class="pieMenu" style="display:none">
       ... content for _unity popup ...
     </div>
 
-    <!-- Hidden content for _rig -->
-    <div id="_unreal" style="display:none">
+    <!-- Hidden content for _tools -->
+    <div id="_unreal" class="pieMenu" style="display:none">
       ... content for _unreal popup ...
     </div>
 
-    <!-- Hidden content for _rig -->
-    <div id="_tools" style="display:none">
+    <!-- Hidden content for _tools -->
+    <div id="_tools" class="pieMenu" style="display:none">
       ... content for _tools popup ...
     </div>
 
+    <!-- Hidden content for _tools -->
+    <div id="_header" class="pieMenu" style="display:none">
+      ... content for _tools popup ...
+    </div>
 
-    <script src="mainLogic.js"></script>
-    <script src="interactiveZone.js"></script>
-    <script src="closeLogic.js"></script>
-    <script src="pieMenuLine.js"></script>
-    <script src="contactsPopup.js"></script>
-    <script src="fullscreenPopup.js"></script>
-    <script src="pieMenu.js"></script>
-
+    <script src="./Scripts/mainLogic.js"></script>
+    <script src="./Scripts/interactiveZone.js"></script>
+    <script src="./Scripts/closeLogic.js"></script>
+    <script src="./Scripts/contactsPopup.js"></script>
+    <script src="./Scripts/fullscreenPopup.js"></script>
+    <script src="./Scripts/pieMenu.js"></script>
+    <script src="./Scripts/pieMenuLine.js"></script>
+    <!-- <script src="./Scripts/pieMenuPopup.js"></script> -->
+    <!-- <script src="rmbMenu.js"></script> -->
 
 </body>
 
 </html>
 
-    <!-- <script src="rmbMenu.js"></script> -->

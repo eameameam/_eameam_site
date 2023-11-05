@@ -1,9 +1,28 @@
+let popups = ['_anim', '_rig', '_unity', '_unreal', '_tools', '_header'];
+
 const state = {
     isPopupOpen: false,
     isFullScreenPopupOpen: false,
     isPieMenuVisible: false, 
     isContextMenuOpen: false
 };
+
+const elements = {
+    overlay: document.getElementById("overlay"),
+    content: document.getElementById("content"),
+    centerText: document.getElementById("centerText"),
+    contactBtn: document.getElementById("contactBtn"),
+    contactPopup: document.getElementById("contactPopup"),
+    contactCloseBtn: document.getElementById("contactCloseBtn"),
+    fullScreenPopup: document.getElementById("fullScreenPopup"),
+    fullScreenCloseBtn: document.getElementById("fullScreenCloseBtn"),
+    fullScreenContent: document.getElementById("fullScreenContent"),
+};
+
+elements.centerText.style.opacity = 1;
+elements.contactPopup.style.opacity = 0;
+elements.fullScreenPopup.style.opacity = 0;
+elements.overlay.style.opacity = 0;
 
 function toggleState(menuType) {
     for (let key in state) {
@@ -14,24 +33,6 @@ function toggleState(menuType) {
         state[menuType] = true;
     }
 }
-
-
-const elementsOpacity = {
-    popup: document.getElementById("popup"),
-    fullScreenPopup: document.getElementById("fullScreenPopup"),
-    contactOverlay: document.getElementById("contactOverlay"),
-    fullScreenOverlay: document.getElementById("fullScreenOverlay"),
-    rmbMenuOverlay: document.getElementById("rmbMenuOverlay"),
-    centerText: document.getElementById("centerText"),
-};
-
-elementsOpacity.popup.style.opacity = 0;
-elementsOpacity.fullScreenPopup.style.opacity = 0;
-elementsOpacity.contactOverlay.style.opacity = 0;
-elementsOpacity.fullScreenOverlay.style.opacity = 0;
-elementsOpacity.rmbMenuOverlay.style.opacity = 0;
-elementsOpacity.centerText.style.opacity = 1;
-
 
 function fade(element, targetOpacity, display = "block", duration = 400) {
     if (!element.classList.contains("fade-transition")) {
@@ -55,7 +56,6 @@ function fade(element, targetOpacity, display = "block", duration = 400) {
     }
 }
 
-
 function blur(element, applyBlur = true) {
     if (!element.classList.contains("blur-transition")) {
         element.classList.add("blur-transition");
@@ -68,7 +68,6 @@ function blur(element, applyBlur = true) {
     }
 }
 
-
 function createPopup(options = {}) {
     const popup = document.createElement("div");
     popup.style.borderRadius = "5px";
@@ -80,8 +79,3 @@ function createPopup(options = {}) {
     }
     return popup;
 }
-
-
-
-
-

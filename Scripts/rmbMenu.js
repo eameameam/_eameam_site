@@ -1,12 +1,8 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
+        
     let contextMenu = null;
     let subMenu = null;
     let isCustomContextMenuEnabled = true;
-
-    const rmbMenuElements = {
-        content: document.getElementById("content"),
-        overlay: document.getElementById("rmbMenuOverlay")
-    };
 
     const menuStructure = {
         "Body": ["Body1", "Body2", "Body3", "Body4", "Body5"],
@@ -23,14 +19,14 @@ document.addEventListener("DOMContentLoaded", function () {
         state.isContextMenuOpen = true;
         console.log('Текущее состояние в createContextMenu 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         lastClickCoords = { x: event.clientX, y: event.clientY };
-    
+
         contextMenu = document.createElement("div");
         contextMenu.classList.add("rmbMenu");
         contextMenu.style.position = "absolute";
         contextMenu.style.left = `${event.clientX}px`;
         contextMenu.style.top = `${event.clientY}px`;
         contextMenu.style.zIndex = "9999";
-    
+
         for (const [key, values] of Object.entries(menuStructure)) {
             const menuItem = document.createElement("div");
             menuItem.textContent = key;
@@ -51,13 +47,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 menuItem.addEventListener('mouseover', () => menuItem.style.color = '#f1f1f1');
                 menuItem.addEventListener('mouseout', () => menuItem.style.color = '#b1b1b1');
             }
-    
+
             contextMenu.appendChild(menuItem);
         }      
         document.body.appendChild(contextMenu);
         
     }
-    
+
     function toggleContextMenu(show = false, event) {
         console.log('Текущее состояние в toggleContextMenu 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         if (state.isPopupOpen || state.isFullScreenPopupOpen || state.isPieMenuVisible) {
@@ -67,29 +63,29 @@ document.addEventListener("DOMContentLoaded", function () {
         if (state.isContextMenuOpen) {
             closeAllMenus();
         }
-    
+
         if (show && isCustomContextMenuEnabled && isInInteractiveZone(event.clientX, event.clientY)) {
             console.log('Текущее состояние в toggleContextMenu 2 state.isContextMenuOpen:', state.isContextMenuOpen);
-            if (!document.getElementById("rmbMenuOverlay")) {
-                document.body.appendChild(rmbMenuElements.overlay);
+            if (!document.getElementById("overlay")) {
+                document.body.appendChild(elements.overlay);
             }
-            blur(rmbMenuElements.content, 1);
-            rmbMenuElements.overlay.style.opacity = 0.5;
-    
+            blur(elements.content, 1);
+            elements.overlay.style.opacity = 0.5;
+
             createContextMenu(event);
         }
     }
 
-    
+
     function createSubMenu(key, rect) {
         if (subMenu) {
             document.body.removeChild(subMenu);
         }
-    
+
         subMenu = document.createElement("div");
         styleAndAppendSubMenu(subMenu, rect);
         const subMenuItems = menuStructure[key];
-    
+
         for (const subItem of subMenuItems) {
             const menuItem = createSubMenuItems(subItem);
             subMenu.appendChild(menuItem);
@@ -97,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.appendChild(subMenu);
         console.log(`Creating sub-menu for ${key}.`);
     }
-    
+
     function styleAndAppendSubMenu(menu, rect) {
         menu.classList.add("rmbMenu");
         menu.style.position = "absolute";
@@ -106,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
         menu.style.zIndex = "10000";
         menu.addEventListener('mouseleave', handleSubMenuMouseLeave);
     }
-    
+
     function createSubMenuItems(subItem) {
         console.log('Текущее состояние в createSubMenuItems 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         const menuItem = document.createElement("div");
@@ -116,18 +112,18 @@ document.addEventListener("DOMContentLoaded", function () {
         menuItem.addEventListener("click", () => handleSubMenuItemClick(subItem));
         return menuItem;
     }
-    
+
     function outsideClickHandler(event) {
         if (!subMenu || !subMenu.contains(event.target)) {
             closeAllMenus();
         }
     }
-    
+
     function closeAllMenus() {
         console.log('Текущее состояние в closeAllMenus 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         if (state.isContextMenuOpen) {
-            rmbMenuElements.overlay.style.opacity = 0;
-            blur(rmbMenuElements.content, 0);
+            elements.overlay.style.opacity = 0;
+            blur(elements.content, 0);
             if (contextMenu) {
                 document.body.removeChild(contextMenu);
                 contextMenu = null;
@@ -166,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log('Текущее состояние в handleSubMenuItemClick 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         toggleState();
     }
-    
+
 
     window.closeAllMenus = closeAllMenus;
     window.toggleContextMenu = toggleContextMenu;
