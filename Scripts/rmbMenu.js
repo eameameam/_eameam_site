@@ -160,6 +160,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function handleSubMenuItemClick(subItem) {
         console.log(`Выбран пункт: ${subItem}`);
         console.log('Текущее состояние в handleSubMenuItemClick 1 state.isContextMenuOpen:', state.isContextMenuOpen);
+        closeAllMenus();
         toggleState();
     }
 

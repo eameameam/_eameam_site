@@ -14,16 +14,17 @@ document.addEventListener("DOMContentLoaded", function() {
             renderInteractiveComponents(event);
             imageConfigs.forEach(config => {
                 document.body.appendChild(createPieMenuItem(config, event));
-                setPopupVisibility(config, true);
             });
+            document.addEventListener("mousemove", updatePopupsScale); 
         } else {
             state.isPieMenuVisible = false;
             clearInteractiveComponents();
-            imageConfigs.forEach(config => setPopupVisibility(config, false));
             document.body.classList.remove("no-select");
             blur(elements.content, 0);
             fade(elements.centerText, 1);
+            document.removeEventListener("mousemove", updatePopupsScale); 
         }
+        document[show ? 'addEventListener' : 'removeEventListener']("mousemove", updatePopupsScale);
     }
     
 
@@ -31,36 +32,21 @@ document.addEventListener("DOMContentLoaded", function() {
         return !state.isFullScreenPopupOpen && !state.isPieMenuVisible && !state.isPopupOpen && !state.isContextMenuOpen && isInInteractiveZone(event.clientX, event.clientY);
     }
 
-    function setPopupVisibility(config, visible) {
-        if (config.element) {
-            if (visible) {
-                config.element.classList.add('visible');
-            } else {
-                config.element.classList.remove('visible');
-            }
-        }
-    }
-
-    document.addEventListener("mousedown", function(event) {
-        if (event.button === 0) { 
-            if (!state.isFullScreenPopupOpen && canShowPieMenu(event)) {
-                blur(elements.content, 1);
-                fade(elements.centerText, 0);
-                togglePieMenu(true, event);
-                document.body.classList.add("no-select");
-                event.preventDefault();
-            }
+    window.addEventListener("mousedown", function(event) {
+        if (event.button === 0 && !state.isFullScreenPopupOpen) {
+            togglePieMenu(true, event);
+            event.preventDefault();
+            blur(elements.content, 1);
+            fade(elements.centerText, 0);
         }
     });
     
-    document.addEventListener("mouseup", function(event) {
+    window.addEventListener("mouseup", function(event) {
         if (event.button === 0) {
             togglePieMenu(false, event);
             event.preventDefault();
-            document.removeEventListener("mousemove", updatePopupsScale);
         }
     });
-    
 
     function clearInteractiveComponents() {
         imageConfigs.forEach(config => {
@@ -81,7 +67,6 @@ document.addEventListener("DOMContentLoaded", function() {
             document.body.removeChild(line);
             line = null;
         }
-        document.removeEventListener("mousemove", drawLine);
     }
 
     function createPieMenuItem(config, event) {
@@ -107,10 +92,14 @@ document.addEventListener("DOMContentLoaded", function() {
         pieMenuPopup.dataset.name = config.name;
         pieMenuPopup.id = config.name;
     
-        config.element = pieMenuPopup; 
+        config.element = pieMenuPopup;
     
         if (config.name !== '_header') {
-            pieMenuPopup.addEventListener("mouseenter", () => toggleFullScreenPopup(true, config.name));
+            pieMenuPopup.addEventListener("mouseenter", () => {
+                toggleFullScreenPopup(true, config.name);
+                document.removeEventListener("mousemove", updatePopupsScale);
+                togglePieMenu(false, event);
+            });
             document.addEventListener("mousemove", updatePopupsScale);
         }
         return pieMenuPopup;
@@ -125,7 +114,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             const pieMenuPopup = config.element;
             if (!pieMenuPopup) {
-                console.error(`Element with ID ${config.name} not found.`);
                 return;
             }
             let popupRect = pieMenuPopup.getBoundingClientRect();
