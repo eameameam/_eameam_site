@@ -165,6 +165,47 @@ body::after {
   z-index: 9999;
 }
 
+.tools-popup-content {
+  padding: 20px 20px; 
+  display: flex;
+  color: white;
+}
+
+.hierarchy-panel,
+.code-panel,
+.preview-panel {
+  flex: 1;
+}
+
+.code-panel {
+  flex: 1;
+  box-sizing: border-box;
+  max-height: 90%; /* Ограничение высоты в процентах от родителя */
+  overflow-y: auto; /* Полоса прокрутки появляется автоматически при необходимости */
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  background: rgba(10, 10, 10, 0.8);
+  border-radius: 10px;
+  width: 100%; /* Ширина в процентах для адаптивности */
+}
+
+.full-screen-popup {
+  width: 90vw; /* Занимает 100% ширины области просмотра */
+  height: 90vh; /* Занимает 100% высоты области просмотра */
+  background-color: rgba(3, 3, 3, 0.9);
+  display: none; /* Скрытие до активации */
+  overflow: hidden; /* Предотвращает появление скролла на самом попапе */
+}
+
+
+.hierarchy-panel .dir {
+  font-weight: bold;
+}
+
+.hierarchy-panel .file {
+  font-style: italic;
+}
+
 #contactPopup {
   width: 300px;
   height: 170px;
@@ -189,12 +230,7 @@ body::after {
   border: none;
 }
 
-.full-screen-popup {
-  width: 90%;
-  height: 90%;
-  background-color: rgba(3, 3, 3, 0.9);
-  display: none;
-}
+
 
 #content {
   position: relative;

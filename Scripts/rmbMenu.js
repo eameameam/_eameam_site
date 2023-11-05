@@ -15,9 +15,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function createContextMenu(event) {
         toggleState('isContextMenuOpen');
-        console.log('Creating main context menu.');
         state.isContextMenuOpen = true;
-        console.log('Текущее состояние в createContextMenu 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         lastClickCoords = { x: event.clientX, y: event.clientY };
 
         contextMenu = document.createElement("div");
@@ -55,7 +53,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function toggleContextMenu(show = false, event) {
-        console.log('Текущее состояние в toggleContextMenu 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         if (state.isPopupOpen || state.isFullScreenPopupOpen || state.isPieMenuVisible) {
             return;
         }
@@ -65,13 +62,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         if (show && isCustomContextMenuEnabled && isInInteractiveZone(event.clientX, event.clientY)) {
-            console.log('Текущее состояние в toggleContextMenu 2 state.isContextMenuOpen:', state.isContextMenuOpen);
-            if (!document.getElementById("overlay")) {
-                document.body.appendChild(elements.overlay);
-            }
-            blur(elements.content, 1);
-            elements.overlay.style.opacity = 0.5;
-
             createContextMenu(event);
         }
     }
@@ -91,7 +81,6 @@ document.addEventListener("DOMContentLoaded", function() {
             subMenu.appendChild(menuItem);
         }
         document.body.appendChild(subMenu);
-        console.log(`Creating sub-menu for ${key}.`);
     }
 
     function styleAndAppendSubMenu(menu, rect) {
@@ -104,7 +93,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function createSubMenuItems(subItem) {
-        console.log('Текущее состояние в createSubMenuItems 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         const menuItem = document.createElement("div");
         menuItem.textContent = subItem;
         menuItem.addEventListener('mouseover', () => menuItem.style.color = '#f1f1f1');
@@ -120,10 +108,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function closeAllMenus() {
-        console.log('Текущее состояние в closeAllMenus 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         if (state.isContextMenuOpen) {
-            elements.overlay.style.opacity = 0;
-            blur(elements.content, 0);
             if (contextMenu) {
                 document.body.removeChild(contextMenu);
                 contextMenu = null;
@@ -132,17 +117,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.body.removeChild(subMenu);
                 subMenu = null;
             }
-            console.log('trying to close menu');
             document.removeEventListener("click", outsideClickHandler); 
 
         }
-        console.log('isnt trying to close menu');
     }
 
     function handleContextMenu(event) {
-        console.log('Текущее состояние в handleContextMenu 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         if (isCustomContextMenuEnabled) {
-            console.log('Текущее состояние в handleContextMenu 2 state.isContextMenuOpen:', state.isContextMenuOpen);
             event.preventDefault();
             toggleContextMenu(true, event);
             document.addEventListener("click", outsideClickHandler);
@@ -153,20 +134,13 @@ document.addEventListener("DOMContentLoaded", function() {
     function handleSubMenuMouseLeave() {
         document.body.removeChild(subMenu);
         subMenu = null;
-        console.log('leave');
-        console.log('Текущее состояние в handleSubMenuMouseLeave 1 state.isContextMenuOpen:', state.isContextMenuOpen);
     }
 
     function handleSubMenuItemClick(subItem) {
         console.log(`Выбран пункт: ${subItem}`);
-        console.log('Текущее состояние в handleSubMenuItemClick 1 state.isContextMenuOpen:', state.isContextMenuOpen);
         closeAllMenus();
         toggleState();
     }
-
-
-    window.closeAllMenus = closeAllMenus;
-    window.toggleContextMenu = toggleContextMenu;
 
     document.addEventListener("contextmenu", handleContextMenu);
     document.addEventListener("mousedown", outsideClickHandler);

@@ -20,8 +20,10 @@ document.addEventListener("DOMContentLoaded", function() {
             state.isPieMenuVisible = false;
             clearInteractiveComponents();
             document.body.classList.remove("no-select");
-            blur(elements.content, 0);
-            fade(elements.centerText, 1);
+            if (!state.isFullScreenPopupOpen) {
+                blur(elements.content, 0);
+                fade(elements.centerText, 1);
+            }
             document.removeEventListener("mousemove", updatePopupsScale); 
         }
         document[show ? 'addEventListener' : 'removeEventListener']("mousemove", updatePopupsScale);
@@ -33,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     window.addEventListener("mousedown", function(event) {
-        if (event.button === 0 && !state.isFullScreenPopupOpen) {
+        if (event.button === 0 && !state.isFullScreenPopupOpen && !state.isPopupOpen && !state.isContextMenuOpen && isInInteractiveZone(event.clientX, event.clientY)) {
             togglePieMenu(true, event);
             event.preventDefault();
             blur(elements.content, 1);
@@ -42,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     
     window.addEventListener("mouseup", function(event) {
-        if (event.button === 0) {
+        if (event.button === 0 && !state.isFullScreenPopupOpen) {
             togglePieMenu(false, event);
             event.preventDefault();
         }
