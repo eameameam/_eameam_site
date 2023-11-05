@@ -2,7 +2,6 @@ let circle = null;
 let endCircle = null;
 let line = null;
 
-
 function createCircleElement(event, isEndCircle = false) {
     const circleElem = document.createElement("div");
     circleElem.style = "width: 10px; height: 10px; background: rgba(130, 130, 130, 0.9); position: absolute; border-radius: 50%; z-index: 3;";
@@ -36,27 +35,8 @@ function drawLine(event) {
     line.style.top = y1 + "px";
     line.style.transformOrigin = "top left";
     line.style.transform = `rotate(${angle}deg)`;
-    
+
     updateEndCirclePosition(event);
-        
-    popups.forEach((popupId) => {
-        const popup = document.getElementById(popupId);
-        if (!popup || !popup.dataset) return; 
-        if (popup.dataset.name === '_header') return; 
-
-        let popupRect = popup.getBoundingClientRect();
-        let popupCenterX = (popupRect.left + popupRect.right) / 2;
-        let popupCenterY = (popupRect.top + popupRect.bottom) / 2;
-
-        let distanceToPopup = Math.sqrt(Math.pow(popupCenterX - x2, 2) + Math.pow(popupCenterY - y2, 2));
-
-        let maxDistance = 150; 
-        let minScale = 1.0;  
-        let maxScale = 0.8; 
-
-        let scale = maxScale - (maxScale - minScale) * Math.min(distanceToPopup, maxDistance) / maxDistance;
-        popup.style.transform = `scale(${scale})`;
-    });
 }
 
 function createLine(event) {

@@ -1,5 +1,3 @@
-let popups = ['_anim', '_rig', '_unity', '_unreal', '_tools', '_header'];
-
 const state = {
     isPopupOpen: false,
     isFullScreenPopupOpen: false,
@@ -34,7 +32,7 @@ function toggleState(menuType) {
     }
 }
 
-function fade(element, targetOpacity, display = "block", duration = 400) {
+function fade(element, targetOpacity, display = "block", duration = 0) {
     if (!element.classList.contains("fade-transition")) {
         element.classList.add("fade-transition");
     }
@@ -68,8 +66,9 @@ function blur(element, applyBlur = true) {
     }
 }
 
-function createPopup(options = {}) {
-    const popup = document.createElement("div");
+function createPopup(options) {
+    const popup = document.createElement('div');
+    popup.id = options.name;
     popup.style.borderRadius = "5px";
     for (const [key, value] of Object.entries(options.styles || {})) {
         popup.style[key] = value;
