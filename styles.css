@@ -149,24 +149,30 @@ body::after {
 
 .pieMenu {
   display: none;
-  /* other styles */
 }
 
 .pieMenu.visible {
   display: block;
-  /* adjust display as needed, could be flex, grid, etc. */
 }
 
-.full-screen-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
+.popup-header {
+  height: 10vh; /* Фиксированная высота хедера */
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  background: rgba(5, 5, 5, 0.8);
+  border-radius: 10px;
+  padding: 10px 10px; 
 }
 
 .tools-popup-content {
-  padding: 20px 20px; 
+  flex: 1;
+  display: flex;
+  overflow: hidden; 
+  padding: 30px 30px; 
   display: flex;
   color: white;
 }
@@ -174,27 +180,49 @@ body::after {
 .hierarchy-panel,
 .code-panel,
 .preview-panel {
+  max-height: calc(80vh - 20px); 
   flex: 1;
+}
+
+.hierarchy-panel, .preview-panel {
+  flex: 1;
+  box-sizing: border-box;
+  max-height: 90%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  background: rgba(9, 9, 9, 0.8);
+  border-radius: 10px;
+  width: 100%;
+  padding: 10px 10px; 
 }
 
 .code-panel {
   flex: 1;
   box-sizing: border-box;
-  max-height: 90%; /* Ограничение высоты в процентах от родителя */
-  overflow-y: auto; /* Полоса прокрутки появляется автоматически при необходимости */
-  overflow-x: hidden;
+  max-height: 90%;
+  overflow-y: auto;
+  overflow-x: auto;
   white-space: pre-wrap;
   background: rgba(10, 10, 10, 0.8);
   border-radius: 10px;
-  width: 100%; /* Ширина в процентах для адаптивности */
+  width: 100%;
+  padding: 10px 10px; 
 }
 
 .full-screen-popup {
-  width: 90vw; /* Занимает 100% ширины области просмотра */
-  height: 90vh; /* Занимает 100% высоты области просмотра */
+  width: 90vw;
+  height: 90vh;
   background-color: rgba(3, 3, 3, 0.9);
-  display: none; /* Скрытие до активации */
-  overflow: hidden; /* Предотвращает появление скролла на самом попапе */
+  display: none; 
+  overflow: hidden; 
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  padding: 10px; 
+  box-sizing: border-box;
 }
 
 

@@ -14,51 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const filePath = fileName ? `${githubPath}/${fileName}` : githubPath;
         loadFileFromGithub(githubUser, githubRepo, filePath);
     }
-    
 
-    function loadPreviewAndDescription(fileName) {
-        // Ваш код для загрузки превью и описания файла
-    }
-
-    window.createToolsPopupContent = function() {
-
-        const toolsPopup = document.createElement('div');
-        toolsPopup.className = 'tools-popup-content';
-    
-        // Style the popup container
-        toolsPopup.style.display = 'flex'; // This will align the child divs in a row
-        toolsPopup.style.color = 'white'; // Set default text color to white
-
-        // Create and style the panels
-        const leftPanel = document.createElement('div');
-        leftPanel.className = 'hierarchy-panel';
-        leftPanel.style.flex = '1'; // This ensures the div takes up 1/3 of the space
-
-        const centerPanel = document.createElement('div');
-        centerPanel.className = 'code-panel';
-        centerPanel.style.flex = '1'; // Same as above
-
-        const rightPanel = document.createElement('div');
-        rightPanel.className = 'preview-panel';
-        rightPanel.style.flex = '1'; // Same as above
-
-        // Append the panels
-        toolsPopup.appendChild(leftPanel);
-        toolsPopup.appendChild(centerPanel);
-        toolsPopup.appendChild(rightPanel);
-    
-        loadHierarchy();
-        loadFileContent(toolsPopupContent.selectedFile);
-        loadPreviewAndDescription(toolsPopupContent.selectedFile);
-    
-        const toolsDiv = document.getElementById('_tools');
-        if (toolsDiv) {
-            toolsDiv.appendChild(toolsPopup);
-        }
-    
-        return toolsPopup;
-    };
-    
     function loadFileFromGithub(user, repo, filePath) {
         fetch(`https://api.github.com/repos/${user}/${repo}/contents/${filePath}`)
             .then(response => response.json())
@@ -100,5 +56,127 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .catch(error => console.error('Ошибка при загрузке данных из GitHub:', error));
     }
+
     
+    window.loadPreviewAndDescription = function(fileName, popupName) {
+        const previewBlock = document.createElement('div');
+        previewBlock.style.display = 'flex';
+        previewBlock.style.flexDirection = 'column';
+        previewBlock.style.alignItems = 'center';
+        previewBlock.style.justifyContent = 'center';
+        previewBlock.style.height = '100%';
+    
+        const imagePreview = document.createElement('img');
+        const currentFolder = getCurrentFolderName() || 'default';
+        imagePreview.src = currentFolder === 'site' 
+            ? `Resources/Tools/sitePreview.png` 
+            : `Resources/Tools/${popupName}Header.png`;
+        imagePreview.alt = 'Preview';
+        imagePreview.style.width = '100%'; 
+        imagePreview.style.height = 'auto'; 
+        imagePreview.style.marginBottom = '1rem'; 
+    
+        const description = document.createElement('p');
+        description.textContent = 'Описание файла: ' + fileName;
+        description.style.color = 'white';
+        description.style.textAlign = 'center';
+        description.style.fontSize = '1rem';
+    
+        previewBlock.appendChild(imagePreview);
+        previewBlock.appendChild(description);
+    
+        return previewBlock;
+    };
+    
+    window.createToolsPopupContent = function() {
+        const toolsPopup = document.createElement('div');
+        toolsPopup.className = 'tools-popup-content';
+        toolsPopup.style.display = 'flex';
+        toolsPopup.style.flexDirection = 'column';
+        toolsPopup.style.height = '100vh';
+    
+        const header = window.createPopupHeader('_tools');
+        toolsPopup.appendChild(header);
+    
+        const columnsContainer = document.createElement('div');
+        columnsContainer.style.display = 'flex';
+    
+        const leftPanel = document.createElement('div');
+        leftPanel.className = 'hierarchy-panel';
+        leftPanel.style.flex = '1';
+    
+        const centerPanel = document.createElement('div');
+        centerPanel.className = 'code-panel';
+        centerPanel.style.flex = '4';
+    
+        const rightPanel = document.createElement('div');
+        rightPanel.className = 'preview-panel';
+        rightPanel.style.flex = '2';
+        rightPanel.style.display = 'flex'; // Установка flex для выравнивания содержимого
+        rightPanel.style.flexDirection = 'column'; // Вертикальное направление содержимого
+        rightPanel.style.alignItems = 'flex-start'; // Выравнивание содержимого по верху
+    
+        const previewBlock = window.loadPreviewAndDescription(toolsPopupContent.selectedFile, '_tools');
+        rightPanel.appendChild(previewBlock);
+    
+        columnsContainer.appendChild(leftPanel);
+        columnsContainer.appendChild(centerPanel);
+        columnsContainer.appendChild(rightPanel);
+    
+        toolsPopup.appendChild(columnsContainer);
+    
+        loadHierarchy();
+        loadFileContent(toolsPopupContent.selectedFile);
+        // Эта строка ниже уже не нужна, так как мы уже добавили previewBlock выше
+        // loadPreviewAndDescription(toolsPopupContent.selectedFile, '_tools');
+    
+        const toolsDiv = document.getElementById('_tools');
+        if (toolsDiv) {
+            toolsDiv.appendChild(toolsPopup);
+        }
+    
+        return toolsPopup;
+    };
+    
+    
+    function getCurrentFolderName() {
+        // Функция должна определить текущую папку.
+        // Это псевдокод, необходимо реализовать логику в соответствии с вашим окружением
+        const path = window.location.pathname;
+        const folderName = path.substring(path.lastIndexOf('/')+1);
+        return folderName;
+    }
+    
+    
+    window.createPopupHeader = function(popupName) {
+        const header = document.createElement('div');
+        header.className = 'popup-header';
+        header.style.display = 'flex';
+        header.style.justifyContent = 'flex-start';
+        header.style.alignItems = 'center';
+        header.style.height = '10%'; 
+    
+        const logo = document.createElement('img');
+        logo.src = `Resources/${popupName}Header.png`;
+        logo.alt = 'Logo';
+        logo.style.height = '90%';
+    
+        const descriptionText = popupName === '_tools' ? 
+            "Comprehensive suite of tools crafted for rigging, animation, and seamless integration between Maya and Unity. " +
+            "Features one-click solutions for data transfer, animator-friendly visualization in 3D space, " +
+            "and a host of utilities for efficient rig manipulation. Designed to streamline the workflow for 3D artists and animators." : 
+            "Your Description Here";
+    
+        const description = document.createElement('span');
+        description.textContent = descriptionText; 
+        description.style.marginLeft = '1rem';
+        description.style.color = 'white';
+        description.style.fontSize = '1rem';
+    
+        header.appendChild(logo);
+        header.appendChild(description);
+    
+        return header;
+    };
+
 });
