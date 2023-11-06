@@ -2,24 +2,25 @@ document.addEventListener("DOMContentLoaded", function() {
     const githubUser = 'eameameam';
     const githubRepo = 'Site';
     const githubPath = '';
+    let currentPath = '';
     let toolsPopupContent = {
         selectedFile: null // You will need to set this based on some logic
     };
     
     function loadHierarchy() {
-        getGithubRepoFiles(githubUser, githubRepo, githubPath);
+        currentPath = githubPath; // Initialize currentPath with the root path
+        getGithubRepoFiles(githubUser, githubRepo, currentPath);
     }
-
-    function loadFileContent(fileName) {
-        const filePath = fileName ? `${githubPath}/${fileName}` : githubPath;
-        loadFileFromGithub(githubUser, githubRepo, filePath);
+    
+    function loadFileContent(fullPath) {
+        loadFileFromGithub(githubUser, githubRepo, fullPath);
     }
-
+    
     function loadFileFromGithub(user, repo, filePath) {
         fetch(`https://api.github.com/repos/${user}/${repo}/contents/${filePath}`)
             .then(response => response.json())
             .then(data => {
-                if(data.content) {
+                if (data.content) {
                     const content = atob(data.content);
                     const codePanel = document.querySelector('.code-panel');
                     codePanel.innerHTML = '';
@@ -30,27 +31,32 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .catch(error => console.error('Ошибка при загрузке файла с GitHub:', error));
     }
-
+    
     function getGithubRepoFiles(user, repo, path) {
         fetch(`https://api.github.com/repos/${user}/${repo}/contents/${path}`)
             .then(response => response.json())
             .then(data => {
                 if (Array.isArray(data)) {
                     const hierarchyPanel = document.querySelector('.hierarchy-panel');
-                    hierarchyPanel.innerHTML = ''; // Очистить текущее содержимое панели
+                    hierarchyPanel.innerHTML = ''; // Clear current panel content
                     data.forEach(item => {
                         const itemElement = document.createElement('div');
                         itemElement.textContent = item.name;
-                        itemElement.classList.add(item.type); // Добавить класс для стилизации (file или dir)
+                        itemElement.classList.add(item.type); // Add class for styling (file or dir)
     
-                        // Если элемент является папкой, назначаем ему обработчик для раскрытия содержимого папки
+                        // If the item is a directory, assign a click handler to expand the directory contents
                         if (item.type === 'dir') {
-                            itemElement.onclick = function() { getGithubRepoFiles(user, repo, `${path}/${item.name}`); };
-                        } else if (item.type === 'file') { // Если элемент является файлом, загружаем его содержимое
-                            itemElement.onclick = function() { loadFileContent(item.name); };
+                            itemElement.onclick = function () {
+                                currentPath = `${path}/${item.name}`; // Update the current path
+                                getGithubRepoFiles(user, repo, currentPath);
+                            };
+                        } else if (item.type === 'file') { // If the item is a file, load its content
+                            itemElement.onclick = function () {
+                                loadFileContent(`${path}/${item.name}`);
+                            };
                         }
     
-                        hierarchyPanel.appendChild(itemElement); // Добавить элемент в панель иерархии
+                        hierarchyPanel.appendChild(itemElement); // Add the element to the hierarchy panel
                     });
                 }
             })

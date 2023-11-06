@@ -78,3 +78,6 @@ function createPopup(options) {
     }
     return popup;
 }
+
+elements.centerText.addEventListener('mouseover', () => elements.centerText.style.color = '#777777');
+elements.centerText.addEventListener('mouseout', () => elements.centerText.style.color = '#a3a3a3');
