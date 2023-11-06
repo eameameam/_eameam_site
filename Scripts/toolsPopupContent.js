@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const githubRepo = 'Site';
     const githubPath = '';
     let currentPath = '';
+    
     let toolsPopupContent = {
         selectedFile: null // You will need to set this based on some logic
     };
@@ -37,8 +38,8 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(response => response.json())
             .then(data => {
                 if (Array.isArray(data)) {
-                    const hierarchyPanel = document.querySelector('.hierarchy-panel');
-                    hierarchyPanel.innerHTML = ''; // Clear current panel content
+                    const hierarchyPanel = document.querySelector('.hierarchy-content'); // Обновленный селектор
+                    hierarchyPanel.innerHTML = '';
                     data.forEach(item => {
                         const itemElement = document.createElement('div');
                         itemElement.textContent = item.name;
@@ -64,6 +65,100 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     
+    window.createToolsPopupContent = function() {
+        const toolsPopup = document.createElement('div');
+        toolsPopup.className = 'tools-popup-content';
+        toolsPopup.style.display = 'flex';
+        toolsPopup.style.flexDirection = 'column';
+        toolsPopup.style.height = '100vh';
+    
+        const header = window.createPopupHeader('_tools');
+        toolsPopup.appendChild(header);
+    
+        const columnsContainer = document.createElement('div');
+        columnsContainer.style.display = 'flex';
+    
+        const leftPanel = document.createElement('div');
+        leftPanel.className = 'hierarchy-panel';
+        leftPanel.style.flex = '1';
+    
+        const centerPanel = document.createElement('div');
+        centerPanel.className = 'code-panel';
+        centerPanel.style.flex = '4';
+    
+        const rightPanel = document.createElement('div');
+        rightPanel.className = 'preview-panel';
+        rightPanel.style.flex = '2';
+        rightPanel.style.display = 'flex';
+        rightPanel.style.flexDirection = 'column'; 
+        rightPanel.style.alignItems = 'flex-start';
+    
+        const previewBlock = window.loadPreviewAndDescription(toolsPopupContent.selectedFile, '_tools');
+        rightPanel.appendChild(previewBlock);
+    
+        const navContainer = document.createElement('div');
+        navContainer.className = 'nav-container';
+        navContainer.style.paddingBottom = '10px';
+    
+        const backButton = document.createElement('button');
+        backButton.textContent = 'Back';
+        backButton.style.marginRight = '5px';
+        backButton.style.padding = '5px';
+        backButton.style.fontSize = '1rem';
+        backButton.textContent = 'Back';
+        backButton.onclick = function() {
+            if (currentPath && currentPath !== githubPath) {
+                const lastSlashIndex = currentPath.lastIndexOf('/');
+                currentPath = lastSlashIndex > 0 ? currentPath.substring(0, lastSlashIndex) : '';
+                getGithubRepoFiles(githubUser, githubRepo, currentPath);
+            }
+        };
+        
+        const homeButton = document.createElement('button');
+        homeButton.textContent = 'Home';
+        homeButton.style.padding = '5px';
+        homeButton.style.fontSize = '1rem';
+        homeButton.textContent = 'Home';
+        homeButton.onclick = function() {
+            currentPath = githubPath || '';
+            getGithubRepoFiles(githubUser, githubRepo, currentPath);
+        };
+
+        navContainer.appendChild(homeButton);
+        navContainer.appendChild(backButton);
+
+        const hierarchyContainer = document.createElement('div');
+        hierarchyContainer.className = 'hierarchy-content'; // Измененный класс
+        hierarchyContainer.style.flex = '1';
+        hierarchyContainer.style.overflowY = 'auto'; 
+    
+        leftPanel.appendChild(navContainer);
+        leftPanel.appendChild(hierarchyContainer);
+
+        columnsContainer.appendChild(leftPanel);
+        columnsContainer.appendChild(centerPanel);
+        columnsContainer.appendChild(rightPanel);
+
+        toolsPopup.appendChild(columnsContainer);
+
+        const toolsDiv = document.getElementById('_tools');
+        if (toolsDiv) {
+            toolsDiv.appendChild(toolsPopup);
+        }
+
+        loadHierarchy();
+        loadFileContent(toolsPopupContent.selectedFile);
+    
+        return toolsPopup;
+    };
+    
+    
+    function getCurrentFolderName() {
+        const path = window.location.pathname;
+        const folderName = path.substring(path.lastIndexOf('/')+1);
+        return folderName;
+    }
+
     window.loadPreviewAndDescription = function(fileName, popupName) {
         const previewBlock = document.createElement('div');
         previewBlock.style.display = 'flex';
@@ -94,64 +189,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return previewBlock;
     };
     
-    window.createToolsPopupContent = function() {
-        const toolsPopup = document.createElement('div');
-        toolsPopup.className = 'tools-popup-content';
-        toolsPopup.style.display = 'flex';
-        toolsPopup.style.flexDirection = 'column';
-        toolsPopup.style.height = '100vh';
-    
-        const header = window.createPopupHeader('_tools');
-        toolsPopup.appendChild(header);
-    
-        const columnsContainer = document.createElement('div');
-        columnsContainer.style.display = 'flex';
-    
-        const leftPanel = document.createElement('div');
-        leftPanel.className = 'hierarchy-panel';
-        leftPanel.style.flex = '1';
-    
-        const centerPanel = document.createElement('div');
-        centerPanel.className = 'code-panel';
-        centerPanel.style.flex = '4';
-    
-        const rightPanel = document.createElement('div');
-        rightPanel.className = 'preview-panel';
-        rightPanel.style.flex = '2';
-        rightPanel.style.display = 'flex'; // Установка flex для выравнивания содержимого
-        rightPanel.style.flexDirection = 'column'; // Вертикальное направление содержимого
-        rightPanel.style.alignItems = 'flex-start'; // Выравнивание содержимого по верху
-    
-        const previewBlock = window.loadPreviewAndDescription(toolsPopupContent.selectedFile, '_tools');
-        rightPanel.appendChild(previewBlock);
-    
-        columnsContainer.appendChild(leftPanel);
-        columnsContainer.appendChild(centerPanel);
-        columnsContainer.appendChild(rightPanel);
-    
-        toolsPopup.appendChild(columnsContainer);
-    
-        loadHierarchy();
-        loadFileContent(toolsPopupContent.selectedFile);
-        // Эта строка ниже уже не нужна, так как мы уже добавили previewBlock выше
-        // loadPreviewAndDescription(toolsPopupContent.selectedFile, '_tools');
-    
-        const toolsDiv = document.getElementById('_tools');
-        if (toolsDiv) {
-            toolsDiv.appendChild(toolsPopup);
-        }
-    
-        return toolsPopup;
-    };
-    
-    
-    function getCurrentFolderName() {
-        // Функция должна определить текущую папку.
-        // Это псевдокод, необходимо реализовать логику в соответствии с вашим окружением
-        const path = window.location.pathname;
-        const folderName = path.substring(path.lastIndexOf('/')+1);
-        return folderName;
-    }
+
     
     
     window.createPopupHeader = function(popupName) {
