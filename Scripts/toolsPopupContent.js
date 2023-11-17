@@ -4,6 +4,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const githubPath = '';
     let currentPath = '';
     
+    const baseFoldersInfo = [
+        { name: 'Scripts', path: '', image: 'Scripts.png', description: 'Description for Scripts' },
+        { name: 'ETimebookmarksToClips', path: '', image: 'Resources/Tools/ETimebookmarksToClips.png', description: 'Description for ETimebookmarksToClips' },
+      ];
+
     let toolsPopupContent = {
         selectedFile: null // You will need to set this based on some logic
     };
@@ -64,13 +69,12 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(error => console.error('Ошибка при загрузке данных из GitHub:', error));
     }
 
-    
     window.createToolsPopupContent = function() {
         const toolsPopup = document.createElement('div');
         toolsPopup.className = 'tools-popup-content';
         toolsPopup.style.display = 'flex';
         toolsPopup.style.flexDirection = 'column';
-        toolsPopup.style.height = '100vh';
+        toolsPopup.style.height = '90vh';
     
         const header = window.createPopupHeader('_tools');
         toolsPopup.appendChild(header);
@@ -79,8 +83,11 @@ document.addEventListener("DOMContentLoaded", function() {
         columnsContainer.style.display = 'flex';
     
         const leftPanel = document.createElement('div');
-        leftPanel.className = 'hierarchy-panel';
+        leftPanel.className = 'hierarchy-panel tools-popup-content';
         leftPanel.style.flex = '1';
+        leftPanel.style.display = 'flex';
+        leftPanel.style.flexDirection = 'column';
+        leftPanel.style.height = '80vh';
     
         const centerPanel = document.createElement('div');
         centerPanel.className = 'code-panel';
@@ -93,19 +100,20 @@ document.addEventListener("DOMContentLoaded", function() {
         rightPanel.style.flexDirection = 'column'; 
         rightPanel.style.alignItems = 'flex-start';
     
-        const previewBlock = window.loadPreviewAndDescription(toolsPopupContent.selectedFile, '_tools');
-        rightPanel.appendChild(previewBlock);
-    
         const navContainer = document.createElement('div');
         navContainer.className = 'nav-container';
         navContainer.style.paddingBottom = '10px';
-    
+      
+        const hierarchyContainer = document.createElement('div');
+        hierarchyContainer.className = 'hierarchy-content';
+        hierarchyContainer.style.flex = '1';
+        hierarchyContainer.style.overflowY = 'auto';
+
         const backButton = document.createElement('button');
         backButton.textContent = 'Back';
         backButton.style.marginRight = '5px';
         backButton.style.padding = '5px';
         backButton.style.fontSize = '1rem';
-        backButton.textContent = 'Back';
         backButton.onclick = function() {
             if (currentPath && currentPath !== githubPath) {
                 const lastSlashIndex = currentPath.lastIndexOf('/');
@@ -118,78 +126,65 @@ document.addEventListener("DOMContentLoaded", function() {
         homeButton.textContent = 'Home';
         homeButton.style.padding = '5px';
         homeButton.style.fontSize = '1rem';
-        homeButton.textContent = 'Home';
         homeButton.onclick = function() {
-            currentPath = githubPath || '';
-            getGithubRepoFiles(githubUser, githubRepo, currentPath);
+            createInitialHierarchy(hierarchyContainer);
         };
 
         navContainer.appendChild(homeButton);
         navContainer.appendChild(backButton);
 
-        const hierarchyContainer = document.createElement('div');
-        hierarchyContainer.className = 'hierarchy-content'; // Измененный класс
-        hierarchyContainer.style.flex = '1';
-        hierarchyContainer.style.overflowY = 'auto'; 
-    
+        const createInitialHierarchy = function(container) {
+            container.innerHTML = ''; // Очистка текущего содержимого
+            baseFoldersInfo.forEach(folder => {
+              const folderElement = document.createElement('div');
+              folderElement.className = 'folder';
+              folderElement.textContent = folder.name;
+              folderElement.style.cursor = 'pointer';
+              folderElement.onclick = function() {
+                if (folder.path) {
+                  currentPath = folder.path;
+                  getGithubRepoFiles(githubUser, githubRepo, currentPath);
+                } else {
+                  displayImageAndDescription(rightPanel, folder.image, folder.description);
+                }
+              };
+              container.appendChild(folderElement);
+            });
+          };
+                  
+        createInitialHierarchy(hierarchyContainer);
+
         leftPanel.appendChild(navContainer);
         leftPanel.appendChild(hierarchyContainer);
-
+        
         columnsContainer.appendChild(leftPanel);
         columnsContainer.appendChild(centerPanel);
         columnsContainer.appendChild(rightPanel);
-
+      
         toolsPopup.appendChild(columnsContainer);
 
         const toolsDiv = document.getElementById('_tools');
         if (toolsDiv) {
             toolsDiv.appendChild(toolsPopup);
         }
-
-        loadHierarchy();
-        loadFileContent(toolsPopupContent.selectedFile);
     
         return toolsPopup;
     };
     
-    
-    function getCurrentFolderName() {
-        const path = window.location.pathname;
-        const folderName = path.substring(path.lastIndexOf('/')+1);
-        return folderName;
+
+
+    function displayImageAndDescription(panel, imageSrc, descriptionText) {
+        panel.innerHTML = ''; // Очищаем содержимое панели
+        const image = new Image();
+        image.src = imageSrc;
+        const descElement = document.createElement('p');
+        descElement.textContent = descriptionText;
+        descElement.style.color = 'white';
+        descElement.style.textAlign = 'center';
+        descElement.style.fontSize = '1rem';
+        panel.appendChild(image);
+        panel.appendChild(descElement);
     }
-
-    window.loadPreviewAndDescription = function(fileName, popupName) {
-        const previewBlock = document.createElement('div');
-        previewBlock.style.display = 'flex';
-        previewBlock.style.flexDirection = 'column';
-        previewBlock.style.alignItems = 'center';
-        previewBlock.style.justifyContent = 'center';
-        previewBlock.style.height = '100%';
-    
-        const imagePreview = document.createElement('img');
-        const currentFolder = getCurrentFolderName() || 'default';
-        imagePreview.src = currentFolder === 'site' 
-            ? `Resources/Tools/sitePreview.png` 
-            : `Resources/Tools/${popupName}Header.png`;
-        imagePreview.alt = 'Preview';
-        imagePreview.style.width = '100%'; 
-        imagePreview.style.height = 'auto'; 
-        imagePreview.style.marginBottom = '1rem'; 
-    
-        const description = document.createElement('p');
-        description.textContent = 'Описание файла: ' + fileName;
-        description.style.color = 'white';
-        description.style.textAlign = 'center';
-        description.style.fontSize = '1rem';
-    
-        previewBlock.appendChild(imagePreview);
-        previewBlock.appendChild(description);
-    
-        return previewBlock;
-    };
-    
-
     
     
     window.createPopupHeader = function(popupName) {

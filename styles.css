@@ -175,6 +175,7 @@ body::after {
   padding: 30px 30px; 
   display: flex;
   color: white;
+  border-radius: 10px;
 }
 
 .hierarchy-panel,
